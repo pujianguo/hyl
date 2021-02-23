@@ -14,8 +14,44 @@ function resolve (dir) {
 }
 
 module.exports = {
-  publicPath: '/',
+  publicPath: './',
   outputDir: 'dist',
+  pages: {
+    // home: {
+    //   // 应用入口配置，相当于单页面应用的main.js，必需项
+    //   entry: 'src/modules/console/console.js',
+
+    //   // 应用的模版，相当于单页面应用的public/index.html，可选项，省略时默认与模块名一致
+    //   template: 'public/console.html',
+
+    //   // 编译后在dist目录的输出文件名，可选项，省略时默认与模块名一致
+    //   filename: 'console.html',
+
+    //   // 标题，可选项，一般情况不使用，通常是在路由切换时设置title
+    //   // 需要注意的是使用title属性template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
+    //   title: 'console page',
+
+    //   // 包含的模块，可选项
+    //   chunks:['chunk-vendors','chunk-common'],
+    // },
+    // chunks:['chunk-vendors','chunk-common']
+    // home: 'src/modules/home/main.js',
+    // weifuwu: 'src/modules/weifuwu/main.js',
+    home: {
+      entry: 'src/modules/home/main.js',
+      template: 'public/home.html',
+      filename: 'home.html',
+      title: '首页',
+      chunks: ['chunk', 'chunk-vendors', 'chunk-common', 'home', 'vendor'],
+    },
+    weifuwu: {
+      entry: 'src/modules/weifuwu/main.js',
+      template: 'public/weifuwu.html',
+      filename: 'weifuwu.html',
+      title: '微服务',
+      chunks: ['chunk', 'chunk-vendors', 'chunk-common', 'weifuwu', 'vendor'],
+    },
+  },
   devServer: {
     host: 'localhost',
     port: 80,
@@ -41,14 +77,16 @@ module.exports = {
       .set('api', resolve('src/api'))
       .set('styles', resolve('src/styles'))
       .set('components', resolve('src/components'))
+      .set('home', resolve('src/modules/home'))
+      .set('weifuwu', resolve('src/modules/weifuwu'))
 
-    if (isProduction) {
-      config.plugins.delete('preload')
-      config.optimization.minimize(true)
-      config.optimization.splitChunks({
-        chunks: 'all',
-      })
-    }
+    // if (isProduction) {
+    //   config.plugins.delete('preload')
+    //   config.optimization.minimize(true)
+    //   config.optimization.splitChunks({
+    //     chunks: 'all',
+    //   })
+    // }
   },
   css: {
     // requireModuleExtension: false, // 关闭之后element-ui无法使用

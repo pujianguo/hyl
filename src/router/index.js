@@ -14,6 +14,11 @@ const routes = [
         name: 'Home',
         component: () => import('@/views/home/index'),
       },
+      {
+        path: 'weifuwu',
+        name: 'Weifuwu',
+        component: () => import('@/views/weifuwu/index'),
+      },
     ],
   },
   {

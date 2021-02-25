@@ -1,15 +1,20 @@
 <template>
-  <div class="wiefuwu-index">
-    wiefuwu-index
+  <div class="weifuwu">
+    <Left class="left"></Left>
+    <Right class="right"></Right>
   </div>
 </template>
 
 <script>
+import Left from './Left'
+import Right from './Right'
+
 export default {
-  name: 'wiefuwu-index',
-  components: {},
+  name: 'weifuwu',
+  components: { Left, Right },
   data () {
     return {
+
     }
   },
   computed: {
@@ -26,6 +31,16 @@ export default {
 </script>
 
 <style lang="scss">
-.wiefuwu-index{
+.weifuwu{
+  flex: 1;
+  display: flex;
+  &>.left{
+    width: 300px;
+    height: 100%;
+  }
+  &>.right{
+    flex: 1;
+    background: #eee;
+  }
 }
 </style>

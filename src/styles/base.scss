@@ -9,8 +9,22 @@ html, body{
   background: #fff;
 }
 
-#app{
+#app, .root{
   width: 100%;
   height: 100%;
   min-width: 1000px;
+  overflow: hidden;
+}
+
+.desc-text{
+  color: #909399;
+}
+.color-green{
+  color: rgb(103 194 58);
+}
+.margin-left{
+  margin-left: 8px;
+}
+.margin-right{
+  margin-right: 8px;
 }

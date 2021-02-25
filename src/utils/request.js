@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Notification } from 'element-ui'
 import storage from '@/utils/storage'
-import config from './config'
+import config from '../config'
 
 // 防止ie缓存
 if (navigator.userAgent.indexOf('MSIE 9') > -1) {

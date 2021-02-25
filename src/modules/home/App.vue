@@ -1,5 +1,5 @@
 <template>
-  <div id="homeApp">
+  <div id="homeApp" class="root">
     <router-view></router-view>
   </div>
 </template>

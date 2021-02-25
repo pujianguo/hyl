@@ -88,6 +88,7 @@ export default {
   &-content{
     flex: 1;
     display: flex;
+    overflow: hidden;
   }
 }
 </style>

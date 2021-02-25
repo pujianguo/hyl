@@ -1,5 +1,5 @@
 <template>
-  <div id="weifuwuApp">
+  <div id="weifuwuApp" class="root">
     <router-view></router-view>
   </div>
 </template>

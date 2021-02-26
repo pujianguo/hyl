@@ -156,6 +156,25 @@
           <div id="log-content-bottom"></div>
         </div>
         <div class="log-form">
+          <div class="top">
+            <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="logForm.content"></el-input>
+          </div>
+          <div class="bottom">
+            <el-popover
+              placement="top-start"
+              width="400"
+              v-model="logFormVisible"
+              trigger="click">
+              <p class="margin-bottom font-bold">添加相关成果的W3等链接：</p>
+              <div class="flex-x-center">
+                <el-input placeholder="粘贴链接地址" v-model="logForm.inputLink"></el-input>
+                <el-button class="margin-left" @click="addLink">添加</el-button>
+              </div>
+              <i slot="reference" class="icon el-icon-link"></i>
+            </el-popover>
+            <div class="text">{{logForm.link}}</div>
+            <el-button class="btn" @click="submitLogForm" :loading="submitLogFormBtnLoading">发布</el-button>
+          </div>
         </div>
       </div>
 
@@ -251,6 +270,13 @@ export default {
         { id: 3, type: 'text', user: 'user1', avatar: defaultAvatar, time: '2021-02-01 6:00', content: '我是标题' },
         { id: 4, type: 'link', user: 'user2', avatar: defaultAvatar, time: '2021-02-01 6:00', content: '', link: 'http://www.baidu.com' },
       ],
+      logFormVisible: false,
+      submitLogFormBtnLoading: false,
+      logForm: {
+        link: '',
+        inputLink: '',
+        content: '',
+      },
 
       // add rate
       addRateVisible: false,
@@ -478,6 +504,37 @@ export default {
       // }).catch(e => {
       //   console.log('e', e)
       // })
+    },
+
+    addLink () {
+      if (this.logForm.inputLink === '') {
+        this.$message.warning('请输入链接地址')
+        return
+      }
+      const reg = /^((https?|ftp|file):\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
+      if (!reg.test(this.logForm.inputLink)) {
+        this.$message.warning('请输入正确的链接格式')
+        return
+      }
+      this.logForm.link = this.logForm.inputLink
+      this.logForm.inputLink = ''
+      this.logFormVisible = false
+    },
+    submitLogForm () {
+      if (this.logForm.content === '') {
+        this.$message.warning('请输入内容')
+        return
+      }
+      this.submitLogFormBtnLoading = true
+      setTimeout(() => {
+        this.submitLogFormBtnLoading = false
+        this.$message.success('发布成功')
+        this.logForm = {
+          inputLink: '',
+          link: '',
+          content: '',
+        }
+      }, 1000)
     },
   },
 }

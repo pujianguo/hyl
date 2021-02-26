@@ -1,7 +1,9 @@
 <template>
   <div class="weifuwu-index-right">
     <div class="header">
-      <el-input class="input" v-model="search.input" placeholder="搜索"></el-input>
+      <el-input class="input" v-model="search.input" placeholder="搜索">
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
       <el-select class="select" v-model="search.year" placeholder="全部年份">
         <el-option label="2018" value="2018"></el-option>
         <el-option label="2019" value="2019"></el-option>
@@ -31,9 +33,11 @@
         <div class="list">
           <div class="list-item" v-for="item in lcmList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
-              <el-tag class="tag" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-              <div class="title">{{item.title}}</div>
-              <div class="flag"></div>
+              <div class="title">
+                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
+                {{item.title}}
+              </div>
+              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2">
               <el-avatar size="small" :src="item.avatar || defaultAvatar"></el-avatar>
@@ -59,9 +63,11 @@
         <div class="list">
           <div class="list-item" v-for="item in nfvoList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
-              <el-tag class="tag" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-              <div class="title">{{item.title}}</div>
-              <div class="flag"></div>
+              <div class="title">
+                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
+                {{item.title}}
+              </div>
+              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2"></div>
             <div class="part3"></div>
@@ -76,9 +82,11 @@
         <div class="list">
           <div class="list-item" v-for="item in accessList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
-              <el-tag class="tag" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-              <div class="title">{{item.title}}</div>
-              <div class="flag"></div>
+              <div class="title">
+                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
+                {{item.title}}
+              </div>
+              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2">
 
@@ -222,21 +230,23 @@ export default {
           background: #fff;
           margin-bottom: 8px;
           border-radius: 5px;
-          padding: 10px;
+          padding: 10px 15px;
           .part1{
             width: 100%;
             display: flex;
-            align-items: center;
-            .tag{
-              margin-right: 10px;
-            }
+            align-items: flex-start;
             .title{
               width: 0;
               flex: 1;
-              line-height: 1.2em;
+              line-height: 1.4em;
             }
             .flag{
+              width: 20px;
+              height: 20px;
+              line-height: 20px;
+              text-align: center;
               margin-left: 10px;
+              color: red;
             }
           }
           .part2{

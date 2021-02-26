@@ -1,5 +1,5 @@
 $border-color: #ccc;
-.weifuwu-index-detail{
+.chonggou-index-detail{
   padding: 50px 0;
   .wrapper-loading{
     position: absolute !important;
@@ -39,28 +39,34 @@ $border-color: #ccc;
       overflow: hidden;
       padding: 0;
       .detail-left{
-        flex: 1;
+        flex: 2;
         border-right: 1px solid $border-color;
         padding: 20px;
         box-sizing: border-box;
         overflow: auto;
+        .info-title{
+          font-size: 16px;
+          font-weight: bold;
+          padding-left: 15px;
+        }
         .info{
+          padding: 20px;
           .line{
-            width: 100%;
-            height: 30px;
-            margin: 6px 0;
             display: flex;
             align-items: center;
-            overflow: hidden;
+            padding: 8px 0;
             .label{
-              width: 100px;
+              width: 120px;
+              color: rgb(144 147 153);
             }
             .value{
-              width: 0;
               flex: 1;
               display: flex;
               align-items: center;
-              overflow-x: scroll;
+              overflow-x: auto;
+              .value-a{
+                width: 60px;
+              }
               .avatar{
                 flex-shrink: 0;
                 margin-right: 5px;
@@ -68,160 +74,14 @@ $border-color: #ccc;
               }
             }
           }
-        }
-        .rule{
-          margin-top: 20px;
-          .rule-title{
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
+          .tag{
+            margin-right: 5px;
+            margin-bottom: 3px;
           }
-          .rule-item{
-            widows: 100%;
-            background: #eee;
-            margin-bottom: 8px;
-            padding: 10px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            .rule-item-title{
-              width: 0;
-              flex: 1;
-              margin-right: 8px;
-              line-height: 1.2em;
-            }
-
-          }
-        }
-      }
-      .detail-middle{
-        flex: 2;
-        border-right: 1px solid $border-color;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow: auto;
-        .header{
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          .text{
-            font-size: 16px;
-            font-weight: bold;
-          }
-          .score{
-            color: greenyellow;
-          }
-        }
-        .card{
-          margin-bottom: 10px;
-        }
-
-        .card-title{
-          width: 100%;
-          display: flex;
-          align-items: center;
-          background-color: #eee;
-          padding: 10px 0;
-          cursor: pointer;
-          .icon{
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            text-align: center;
-            margin-left: 10px;
-          }
-          .text{
-            margin-left: 20px;
-            flex: 1;
-          }
-          .score{
-            margin-right: 30px;
-            width: 50px;
-            text-align: right;
-          }
-        }
-        .card-body{
-          border: 1px solid #eee;
-          border-top: 0;
-          transition: height .3s;
-          overflow: hidden;
-          height: auto;
-          .table{
-            padding: 10px;
-            .tr{
-              display: flex;
-              align-items: center;
-              .td-icon{
-                width: 20px;
-                height: 20px;
-                line-height: 20px;
-                text-align: center;
-              }
-              .td{
-                flex: 1;
-                padding: 8px 5px;
-              }
-            }
-            .rate-content{
-              background-color: rgba(238, 238, 238, .2);
-              overflow: hidden;
-              margin: 0 20px;
-              padding: 8px 10px;
-              // min-height: 50px;
-              .empty{
-                height: 50px;
-                padding: 20px;
-                text-align: center;
-              }
-            }
-            .rate-content-hide{
-              height: 0;
-              padding: 0;
-            }
-            .tr-rate{
-              cursor: pointer;
-            }
-            .tr-header{
-              font-size: 12px;
-            }
-            .rate-content-item{
-              display: flex;
-              padding: 5px 0 8px;
-              .left{
-                width: 50px;
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                .avatar{
-                  margin-bottom: 5px;
-                }
-              }
-              .right{
-                width: 0;
-                flex: 1;
-                .right-header{
-                  width: 100%;
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  margin-bottom: 5px;
-                }
-                .text{
-                  font-size: 12px;
-                  line-height: 1.2em;
-                }
-              }
-            }
-          }
-        }
-        .card-body-hide{
-          height: 0;
         }
       }
       .detail-right{
-        flex: 1;
+        flex: 3;
         box-sizing: border-box;
         overflow: hidden;
         display: flex;
@@ -352,24 +212,4 @@ $border-color: #ccc;
       }
     }
   }
-}
-
-.weifuwu-index-detail-add-rate{
-  .el-dialog__body{
-    border-top: 1px solid $border-color;
-  }
-  .add-rate-content{
-    width: 100%;
-    .form-rate{
-      display: flex;
-      align-items: center;
-    }
-  }
-  .footer{
-    text-align: center;
-  }
-}
-
-.loadmore-wrapper{
-  text-align: center;
 }

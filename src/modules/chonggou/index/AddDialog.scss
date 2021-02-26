@@ -1,0 +1,119 @@
+$border-color: #ccc;
+.chonggou-index-add{
+  padding: 50px 0;
+  .wrapper-loading{
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  &>.el-dialog{
+    width: 90%;
+    max-width: 1200px;
+    min-width: 800px;
+    margin: 0 auto !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .el-dialog__footer{
+      border-top: 1px solid $border-color;
+      text-align: center;
+      padding: 15px;
+    }
+    .el-dialog__body{
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      padding: 0;
+      .detail-left{
+        flex: 3;
+        border-right: 1px solid $border-color;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: auto;
+        .info{
+          .line{
+            width: 100%;
+            height: 30px;
+            margin: 6px 0;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            .label{
+              width: 100px;
+            }
+            .value{
+              width: 0;
+              flex: 1;
+              display: flex;
+              align-items: center;
+              overflow-x: scroll;
+              .avatar{
+                flex-shrink: 0;
+                margin-right: 5px;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+        .rule{
+          margin-top: 20px;
+          .rule-title{
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+          }
+          .rule-item{
+            widows: 100%;
+            background: #eee;
+            margin-bottom: 8px;
+            padding: 10px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .rule-item-title{
+              width: 0;
+              flex: 1;
+              margin-right: 8px;
+              line-height: 1.2em;
+            }
+
+          }
+        }
+      }
+      .detail-right{
+        flex: 2;
+        box-sizing: border-box;
+        padding: 10px;
+        overflow-y: auto;
+        .search-box{
+          .form{
+            margin: 10px 0;
+            display: flex;
+          }
+        }
+        .info{
+          padding: 20px;
+          .line{
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            .label{
+              width: 120px;
+              color: rgb(144 147 153);
+            }
+            .value{
+              flex: 1;
+              display: flex;
+              align-items: center;
+              .value-a{
+                width: 60px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

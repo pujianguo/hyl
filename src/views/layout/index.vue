@@ -23,7 +23,7 @@ export default {
       menuList: [
         { title: '首页', pageName: 'Home' },
         { title: '首页2', pageName: 'Weifuwu' },
-        { title: '首页3', pageName: 'Home3' },
+        { title: '首页3', pageName: 'Chonggou' },
         { title: '首页4', pageName: 'Home4' },
       ],
     }

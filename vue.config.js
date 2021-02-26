@@ -51,6 +51,13 @@ module.exports = {
       title: '微服务',
       chunks: ['chunk', 'chunk-vendors', 'chunk-common', 'weifuwu', 'vendor'],
     },
+    chonggou: {
+      entry: 'src/modules/chonggou/main.js',
+      template: 'public/chonggou.html',
+      filename: 'chonggou.html',
+      title: '重构需求',
+      chunks: ['chunk', 'chunk-vendors', 'chunk-common', 'chonggou', 'vendor'],
+    },
   },
   devServer: {
     host: 'localhost',
@@ -79,6 +86,7 @@ module.exports = {
       .set('components', resolve('src/components'))
       .set('home', resolve('src/modules/home'))
       .set('weifuwu', resolve('src/modules/weifuwu'))
+      .set('chonggou', resolve('src/modules/chonggou'))
 
     // if (isProduction) {
     //   config.plugins.delete('preload')

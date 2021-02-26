@@ -82,7 +82,7 @@ import {
 } from 'element-ui'
 import 'styles/element-variables.scss'
 
-Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }
+Vue.prototype.$ELEMENT = { size: 'mini', zIndex: 3000 }
 
 Vue.use(Pagination)
 Vue.use(Dialog)

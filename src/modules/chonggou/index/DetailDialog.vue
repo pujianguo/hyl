@@ -1,7 +1,7 @@
 <template>
   <!-- <el-dialog class="chonggou-index-detail" visible.sync="visible"> -->
   <div>
-    <el-dialog class="chonggou-index-detail" :visible="true">
+    <el-dialog class="chonggou-index-detail" :visible="false">
       <template class="detail-header" slot="title">
         <div class="detail-header-left">{{info ? info.title : ''}}</div>
         <div class="detail-header-right" v-if="info">

@@ -1,9 +1,3 @@
-/*
- * @Descripttion:
- * @Author: pujianguo
- * @Date: 2021-02-22 10:57:53
- */
-
 const path = require('path')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
@@ -37,13 +31,6 @@ module.exports = {
     // chunks:['chunk-vendors','chunk-common']
     // home: 'src/modules/home/main.js',
     // weifuwu: 'src/modules/weifuwu/main.js',
-    home: {
-      entry: 'src/modules/home/main.js',
-      template: 'public/home.html',
-      filename: 'home.html',
-      title: '首页',
-      chunks: ['chunk', 'chunk-vendors', 'chunk-common', 'home', 'vendor'],
-    },
     weifuwu: {
       entry: 'src/modules/weifuwu/main.js',
       template: 'public/weifuwu.html',

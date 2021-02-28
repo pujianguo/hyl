@@ -1,8 +1,3 @@
-/*
- * @Descripttion: 公共方法
- * @Author: pujianguo
- * @Date: 2020-12-07 10:21:50
- */
 import * as filterConst from '@/filter/const'
 import filterFunc from '@/filter/func'
 

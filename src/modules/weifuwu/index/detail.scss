@@ -61,6 +61,7 @@ $border-color: #ccc;
               display: flex;
               align-items: center;
               overflow-x: auto;
+              overflow-y: hidden;
               .avatar{
                 flex-shrink: 0;
                 margin-right: 5px;

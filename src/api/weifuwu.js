@@ -17,3 +17,6 @@ export const addStar = params => _post('weifuwu/star', params)
 export const addRate = params => _post('weifuwu/rate', params)
 
 export const getMsData = params => _get('ms/cards', params)
+export const getMsDetail = id => _get(`ms/${id}`)
+export const getMsStoryList = (id, params) => _get(`story/list/${id}`, params)
+export const getMsLevel = id => _get(`ms-level/${id}`)

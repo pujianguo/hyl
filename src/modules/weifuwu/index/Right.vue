@@ -2,7 +2,7 @@
   <div class="weifuwu-index-right">
     <div class="header">
       <el-input class="input" v-model="search.input" placeholder="搜索">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="handleGetListData"></el-button>
       </el-input>
       <el-select class="select" v-model="search.year" placeholder="全部年份" @change="handleGetListData">
         <el-option label="2018" value="2018"></el-option>
@@ -61,7 +61,7 @@
           <span>{{nfvoListSize}}</span>
         </div>
         <div class="list">
-          <div class="list-item" v-for="item in lcmList" :key="item.id" @click="openDetailDialog(item.id)">
+          <div class="list-item" v-for="item in nfvoList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
               <div class="title">
                 <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
@@ -91,7 +91,7 @@
           <span>{{accessListSize}}</span>
         </div>
         <div class="list">
-          <div class="list-item" v-for="item in lcmList" :key="item.id" @click="openDetailDialog(item.id)">
+          <div class="list-item" v-for="item in accessList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
               <div class="title">
                 <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
@@ -164,6 +164,7 @@ export default {
       }
       getMsData(params).then(res => {
         this.lcmList = res['vnf-lcm'].list
+        console.log(this.lcmList)
         this.lcmListSize = res['vnf-lcm'].size
         this.nfvoList = res['nfvo'].list
         this.nfvoListSize = res['nfvo'].size

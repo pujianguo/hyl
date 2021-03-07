@@ -1,12 +1,12 @@
 <template>
-  <!-- <el-dialog class="weifuwu-index-detail" visible.sync="visible"> -->
   <div>
-    <el-dialog class="weifuwu-index-detail" :visible="false">
+    <!-- <el-dialog class="weifuwu-index-detail" :visible.sync="visible"> -->
+    <el-dialog class="weifuwu-index-detail" :visible="true">
       <template class="detail-header" slot="title">
-        <div class="detail-header-left">{{info.title}}</div>
+        <div class="detail-header-left">{{leftInfo.name}}</div>
         <div class="detail-header-right">
           <span @click="openAddRateDialog">评分</span>
-          <span @click="handleStar"><i class="el-icon-s-flag" :class="{'is-star': info.star}"></i></span>
+          <span @click="handleStar"><i class="el-icon-s-flag" :class="{'is-star': leftInfo.mark}"></i></span>
         </div>
       </template>
       <div class="detail-left" v-loading="leftLoading">
@@ -21,20 +21,20 @@
           </div>
           <div class="line">
             <span class="label">所属域</span>
-            <div class="value">{{leftInfo.yu}}</div>
+            <div class="value">{{leftInfo.group}}</div>
           </div>
           <div class="line">
             <span class="label">负责人</span>
             <div class="value">
-              <el-avatar class="avatar" size="small" :src="leftInfo.fuzerenAvatar"></el-avatar>
-              <span>{{leftInfo.fuzeren}}</span>
+              <el-avatar class="avatar" size="small" :src="leftInfo.avatar"></el-avatar>
+              <span>{{leftInfo.ownerZn}}</span>
             </div>
           </div>
           <div class="line">
             <span class="label">参与者</span>
             <div class="value">
-              <el-tooltip placement="top" v-for="(item, index) in leftInfo.members" :key="index">
-                <div slot="content">{{item.name}}</div>
+              <el-tooltip placement="top" v-for="(item, index) in leftInfo.partyList" :key="index">
+                <div slot="content">{{item.nameZn}}</div>
                 <el-avatar class="avatar" size="small" :src="item.avatar"></el-avatar>
               </el-tooltip>
             </div>
@@ -42,9 +42,12 @@
         </div>
         <div class="rule">
           <div class="rule-title">关联规则</div>
-          <div class="rule-item" v-for="(item, index) in  leftRule" :key="index">
-            <div class="rule-item-title">{{item.title}}</div>
+          <div class="rule-item" v-for="item in  msStory.list" :key="item.id">
+            <div class="rule-item-title">{{item.name}}</div>
             <el-avatar class="rule-item-avatar" size="small" :src="item.avatar"></el-avatar>
+          </div>
+          <div class="loadmore-wrapper" v-if="msStory.hasMore">
+            <el-button size="mini" @click="getMsStoryList" :loading="msStory.loading">加载更多</el-button>
           </div>
         </div>
       </div>
@@ -57,7 +60,7 @@
         <div class="card" v-for="card in middleInfo" :key="card.title">
           <div class="card-title" @click="card.show = !card.show">
             <i class="icon" :class="card.show ? 'el-icon-arrow-down' : 'el-icon-arrow-right'"></i>
-            <div class="text">{{card.title}}</div>
+            <div class="text">{{card.level}}</div>
             <div class="score">{{card.score}}分</div>
           </div>
           <div class="card-body" :class="{'card-body-hide': !card.show}">
@@ -69,35 +72,35 @@
                 <div class="td">时间</div>
               </div>
               <template v-for="(item, index) in card.list">
-                <div class="tr"  :class="{'tr-rate': item.isRate}" @click="openRate(item)" :key="'tr'+index">
+                <div class="tr"  :class="{'tr-rate': item.drop}" @click="openRate(item)" :key="'tr'+index">
                   <div class="td-icon">
-                    <template v-if="item.isRate">
+                    <template v-if="item.drop">
                       <i :class="item.showRate ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i>
                     </template>
                   </div>
-                  <div class="td">{{item.name}}</div>
+                  <div class="td">{{item.project}}</div>
                   <div class="td">
-                    <template v-if="item.isRate">
-                      <el-rate v-model="item.rate" disabled show-score text-color="#ff9900" > </el-rate>
+                    <template v-if="item.drop">
+                      <el-rate v-model="item.score" disabled show-score text-color="#ff9900" > </el-rate>
                     </template>
                     <template v-else>
-                      <template v-if="item.jindu === 100">
+                      <template v-if="item.score === 100">
                         <i class="el-icon-success color-green"></i>
                         <span class="margin-left color-green">完成</span>
                       </template>
-                      <template v-else-if="item.jindu === 0">
+                      <template v-else-if="item.score === null">
                         <span class="desc-text">无数据</span>
                       </template>
                       <template v-else>
-                        <el-progress :percentage="item.jindu" color="rgb(103 194 58)"></el-progress>
+                        <el-progress :percentage="item.score" color="rgb(103 194 58)"></el-progress>
                       </template>
                     </template>
                   </div>
-                  <div class="td">{{item.time}}</div>
+                  <div class="td">{{item.lastUpdateTime || '-'}}</div>
                 </div>
-                <div v-if="item.isRate" :class="['rate-content', {'rate-content-hide': !item.showRate}]" :key="'tr1'+index">
+                <div v-if="item.drop" :class="['rate-content', {'rate-content-hide': !item.showRate}]" :key="'tr1'+index">
                   <div v-loading="item.rateLoading">
-                    <div class="rate-content-item" v-for="rate in item.rateList" :key="rate.id">
+                    <div class="rate-content-item" v-for="rate in item.dropList" :key="rate.id">
                       <div class="left">
                         <el-avatar class="avatar" size="small" :src="rate.avatar"></el-avatar>
                         <span>{{rate.user}}</span>
@@ -110,7 +113,7 @@
                         <div class="title">{{rate.content}}</div>
                       </div>
                     </div>
-                    <div class="empty" v-if="!item.rateList.length">
+                    <div class="empty" v-if="!item.dropList.length">
                       暂无数据
                     </div>
                     <div class="loadmore-wrapper">
@@ -218,6 +221,7 @@ import defaultAvatar from '@/assets/avatar.png'
 import BScroll from 'better-scroll'
 import './detail.scss'
 // import { addStar, addRate } from 'api/weifuwu'
+import {getMsDetail,getMsStoryList,getMsLevel} from 'api/weifuwu'
 
 export default {
   name: 'weifuwu-index-detail',
@@ -230,37 +234,27 @@ export default {
     return {
       visible: false,
 
-      info: {
-        title: '我是标题',
-        star: false,
-      },
-
       leftLoading: false,
       middleLoading: false,
       rightLoading: false,
 
       leftInfo: {
-        score: 100,
-        level: 'L2',
-        yu: 'Access',
-        fuzeren: 'AAA',
-        fuzerenAvatar: defaultAvatar,
-        members: [
-          { name: 'a', avatar: defaultAvatar },
-          { name: 'b', avatar: defaultAvatar },
-          { name: 'c', avatar: defaultAvatar },
-          { name: 'd', avatar: defaultAvatar },
-          { name: 'd', avatar: defaultAvatar },
-          { name: 'd', avatar: defaultAvatar },
-          { name: 'd', avatar: defaultAvatar },
-          { name: 'd', avatar: defaultAvatar },
-        ],
+        name: '',
+        mark: false,
+        score: 0,
+        level: '',
+        group: '',
+        ownerZn: '',
+        avatar: defaultAvatar,
+        partyList: [],
       },
-      leftRule: [
-        { title: '第一个规则', avatar: defaultAvatar },
-        { title: '第二个规则', avatar: defaultAvatar },
-        { title: '第三个规则第三个规则第三个规则第三个规则第三个规则', avatar: defaultAvatar },
-      ],
+      msStory: {
+        list: [],
+        pageNum: 0,
+        pageSize: 10,
+        loading: false,
+        hasMore: true,
+      },
 
       middleInfo: [],
 
@@ -310,6 +304,7 @@ export default {
         this.visible = val
         if (this.visible) {
           this.getDetailDate()
+          this.getMsStoryList()
         }
       }
     },
@@ -320,69 +315,17 @@ export default {
   created () {
   },
   mounted () {
-    this.getMiddleInfo()
+    this.getDetailDate()
+    this.getMsStoryList()
+
+    this.getMsLevel()
+
     this.bs = null
     this.$nextTick(() => {
       this.scrollInit()
     })
   },
   methods: {
-    getMiddleInfo () {
-      this.middleInfo = [
-        {
-          title: 'L1',
-          show: false,
-          score: 88,
-          list: [
-            { name: '编译告警清零', jindu: 100, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 100, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 90, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 70, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 0, time: '-' },
-            { name: '编译告警清零', jindu: 0, time: '-' },
-            { name: '编译告警清零', jindu: 0, time: '-' },
-          ],
-        },
-        {
-          title: 'L2',
-          show: true,
-          score: 66,
-          list: [
-            { name: '编译告警清零', jindu: 100, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 100, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 90, time: '2021-02-01 6:00' },
-            { name: '编译告警清零', jindu: 70, time: '2021-02-01 6:00' },
-            {
-              id: 1,
-              name: '简洁',
-              jindu: 70,
-              time: '2021-02-01 6:00',
-              isRate: true,
-              showRate: false,
-              rate: 3.5,
-              rateLoading: false,
-              pageNum: 3,
-              pageSize: 1,
-              rateList: [],
-            },
-            {
-              id: 2,
-              name: '简洁2',
-              jindu: 70,
-              time: '2021-02-01 6:00',
-              isRate: true,
-              showRate: false,
-              rate: 3.5,
-              rateLoading: false,
-              pageNum: 3,
-              pageSize: 1,
-              rateList: [],
-            },
-          ],
-        },
-      ]
-    },
-
     // log
     scrollToBottom () {
       setTimeout(() => {
@@ -416,23 +359,54 @@ export default {
       console.log('get log list')
     },
 
+    // 获取微服务详情
     getDetailDate () {
-      // TODO: 获取数据
+      let id = this.detailId
+      id = 1
+      getMsDetail(id).then(res => {
+        this.leftInfo = res
+      })
+    },
+    // 获取关联需求
+    getMsStoryList () {
+      let id = this.detailId
+      id = 1
+      this.msStory.pageNum++
+      let params = {
+        pageSize: this.msStory.pageSize,
+        pageNum: this.msStory.pageNum
+      }
+      this.msStory.loading = true
+      getMsStoryList(id, params).then(res => {
+        this.msStory.list = [...this.msStory.list, ...res.rows]
+        if (res.page === this.msStory.pageNum) {
+          this.msStory.hasMore = false
+        }
+      }).finally(() => {
+        this.msStory.loading = false
+      })
+    },
+    getMsLevel(){
+      let id = this.detailId
+      id = 1
+      getMsLevel(id).then(res => {
+        this.middleInfo = res
+      })
     },
 
     openRate (item) {
       // 没有数据时才去获取
-      if (!item.rateList.length) {
+      if (!item.dropList.length) {
         item.rateLoading = true
-        setTimeout(() => {
-          item.rateLoading = false
-          item.rateList = [
-            { id: 1, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-            { id: 2, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-            { id: 3, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-            { id: 4, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-          ]
-        }, 1000)
+        // setTimeout(() => {
+        //   item.rateLoading = false
+        //   item.dropList = [
+        //     { id: 1, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
+        //     { id: 2, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
+        //     { id: 3, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
+        //     { id: 4, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
+        //   ]
+        // }, 1000)
         // listRate(item.id).then(res => {
 
         // }).catch(e => {

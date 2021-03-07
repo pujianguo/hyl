@@ -50,8 +50,8 @@ module.exports = {
     host: 'localhost',
     port: 80,
     proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
+      'api': {
+        target: 'http://192.168.1.108:8083',
         ws: true,
         changeOrigin: true,
         pathRewrite: {

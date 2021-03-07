@@ -4,7 +4,7 @@ const ENV = process.env.VUE_APP_TITLE === 'pre' ? 'pre'
 // 开发版
 const dev = {
   env: 'dev',
-  baseUrl: 'http://localhost:8083',
+  baseUrl: 'api',
   debug: true,
 }
 // 正式版

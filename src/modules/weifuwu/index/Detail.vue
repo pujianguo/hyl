@@ -71,8 +71,8 @@
                 <div class="td">进度</div>
                 <div class="td">时间</div>
               </div>
-              <template v-for="(item, index) in card.list">
-                <div class="tr"  :class="{'tr-rate': item.drop}" @click="openRate(item)" :key="'tr'+index">
+              <template v-for="item in card.list">
+                <div class="tr"  :class="{'tr-rate': item.drop}" @click="openRate(item)" :key="'a'+item.id">
                   <div class="td-icon">
                     <template v-if="item.drop">
                       <i :class="item.showRate ? 'el-icon-caret-bottom' : 'el-icon-caret-right'"></i>
@@ -98,7 +98,7 @@
                   </div>
                   <div class="td">{{item.lastUpdateTime || '-'}}</div>
                 </div>
-                <div v-if="item.drop" :class="['rate-content', {'rate-content-hide': !item.showRate}]" :key="'tr1'+index">
+                <div v-if="item.drop" :class="['rate-content', {'rate-content-hide': !item.showRate}]" :key="'b'+item.id">
                   <div v-loading="item.rateLoading">
                     <div class="rate-content-item" v-for="rate in item.dropList" :key="rate.id">
                       <div class="left">
@@ -107,8 +107,8 @@
                       </div>
                       <div class="right">
                         <div class="right-header">
-                          <el-rate v-model="rate.rate" disabled show-score text-color="#ff9900" > </el-rate>
-                          <span class="desc-text">{{rate.time}}</span>
+                          <el-rate v-model="rate.score" disabled show-score text-color="#ff9900" > </el-rate>
+                          <span class="desc-text">{{rate.dateTime}}</span>
                         </div>
                         <div class="title">{{rate.content}}</div>
                       </div>
@@ -116,8 +116,8 @@
                     <div class="empty" v-if="!item.dropList.length">
                       暂无数据
                     </div>
-                    <div class="loadmore-wrapper">
-                      <el-button size="mini" :loading="item.rateLoading" @click="loadmoreRate(item)">加载更多</el-button>
+                    <div class="loadmore-wrapper" v-if="item.dropList.length && !item.hideMoreBtn">
+                      <el-button size="mini" :loading="item.rateLoading" @click="getMsProject">加载更多</el-button>
                     </div>
                   </div>
                 </div>
@@ -134,7 +134,7 @@
         </el-select>
         <div class="log-box" ref="bsWrapper">
           <div>
-            <div class="item" :class="{'item_only-one': logList.length === 1}" v-for="item in logList" :key="item.id">
+            <div class="item" :class="{'item_only-one': msProject.list.length === 1}" v-for="item in msProject.list" :key="item.id">
               <div class="line-node"></div>
               <div class="line-tail"></div>
               <div class="item-header">
@@ -150,11 +150,14 @@
                 <span class="item-header-right desc-text">{{item.time}}</span>
               </div>
               <div class="item-content">{{item.content}}</div>
-              <div class="item-link" v-if="item.link">
+              <a class="item-link" v-if="item.link" :href="item.link" target="_blank">
                 <i class="icon el-icon-link"></i>
                 <span>{{item.link}}</span>
-              </div>
+              </a>
             </div>
+          </div>
+          <div class="loadmore-wrapper padding" v-if="msProject.list.length && msProject.hasMore">
+            <el-button size="mini" :loading="msProject.loading" @click="loadmoreRate">加载更多</el-button>
           </div>
           <div id="log-content-bottom"></div>
         </div>
@@ -186,20 +189,18 @@
     <!-- 评分表单 -->
     <el-dialog class="weifuwu-index-detail-add-rate" title="评分" :visible.sync="addRateVisible" >
       <el-form class="add-rate-content" :model="addRateForm" :rules="addRateRules" ref="addRateForm" label-position="top" label-width="100px">
-          <el-form-item label="选择项目" prop="a">
-            <el-select v-model="addRateForm.a" placeholder="请选择a" class="margin-right">
-              <el-option label="L1" value="l1"></el-option>
-              <el-option label="L2" value="l2"></el-option>
+          <el-form-item label="选择项目" prop="project">
+            <el-select v-model="addRateForm.level" placeholder="请选择" class="margin-right" @change="changeLevel">
+              <el-option :label="item" :value="item" v-for="(item, index) in levelList" :key="index"></el-option>
             </el-select>
-            <el-select v-model="addRateForm.b" placeholder="请选择b">
-              <el-option label="简洁" value="l1"></el-option>
-              <el-option label="简洁2" value="l2"></el-option>
+            <el-select v-model="addRateForm.project" placeholder="请选择">
+              <el-option :label="item" :value="item" v-for="(item, index) in projectList" :key="index"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="评分" prop="rate">
-            <div class="form-rate">
-              <el-rate class="margin-right" v-model="addRateForm.rate" disabled show-score text-color="#ff9900"></el-rate>
-              <el-input-number class="margin-right" v-model="addRateForm.rate" :precision="1" :step="0.1" :min="0" :max="5"></el-input-number>
+          <el-form-item label="评分" prop="score">
+            <div class="form-score">
+              <el-rate class="margin-right" v-model="addRateForm.score" disabled show-score text-color="#ff9900"></el-rate>
+              <el-input-number class="margin-right" v-model="addRateForm.score" :precision="1" :step="0.1" :min="0" :max="5"></el-input-number>
               <span>满分5分</span>
             </div>
           </el-form-item>
@@ -218,10 +219,10 @@
 
 <script>
 import defaultAvatar from '@/assets/avatar.png'
-import BScroll from 'better-scroll'
+// import BScroll from 'better-scroll'
 import './detail.scss'
 // import { addStar, addRate } from 'api/weifuwu'
-import {getMsDetail,getMsStoryList,getMsLevel} from 'api/weifuwu'
+import {getMsLevelProject,getMsDetail,getMsStoryList,getMsLevel,getMsReview,getMsProject,addMsReview} from 'api/weifuwu'
 
 export default {
   name: 'weifuwu-index-detail',
@@ -258,12 +259,9 @@ export default {
 
       middleInfo: [],
 
+
       logType: 'all',
-      logList: [
-        { id: 1, type: 'text', user: 'system', avatar: '', time: '2021-02-01 6:00', content: '我是标题我是标题我是标题我是标题我是标题我是标题我是标题' },
-        { id: 3, type: 'text', user: 'user1', avatar: defaultAvatar, time: '2021-02-01 6:00', content: '我是标题' },
-        { id: 4, type: 'link', user: 'user2', avatar: defaultAvatar, time: '2021-02-01 6:00', content: '', link: 'http://www.baidu.com' },
-      ],
+      logList: [],
       logFormVisible: false,
       submitLogFormBtnLoading: false,
       logForm: {
@@ -271,29 +269,39 @@ export default {
         inputLink: '',
         content: '',
       },
+      msProject: {
+        list: [],
+        pageNum: 0,
+        pageSize: 10,
+        loading: false,
+        hasMore: true,
+      },
 
       // add rate
       addRateVisible: false,
       addRateForm: {
-        a: '',
-        b: '',
-        rate: 5,
+        level: '',
+        project: '',
+        score: 5,
         content: '',
       },
       addRateRules: {
-        a: [
-          { required: true, message: '请选择a', trigger: 'change' },
+        level: [
+          { required: true, message: '请选择', trigger: 'change' },
         ],
-        b: [
-          { required: true, message: '请选择b', trigger: 'change' },
+        project: [
+          { required: true, message: '请选择项目', trigger: 'change' },
         ],
-        rate: [
+        score: [
           { required: true, message: '请填写评分', trigger: 'blur' },
         ],
         content: [
           { required: true, message: '请填写评语', trigger: 'blur' },
         ],
       },
+      levelList: [],
+      projectList: [],
+      levelObj: [],
     }
   },
   computed: {
@@ -319,36 +327,31 @@ export default {
     this.getMsStoryList()
 
     this.getMsLevel()
+    this.getMsProject()
 
-    this.bs = null
-    this.$nextTick(() => {
-      this.scrollInit()
-    })
+    // 获取下拉列表
+    this.getMsLevelProject()
   },
   methods: {
-    // log
-    scrollToBottom () {
-      setTimeout(() => {
-        this.bs.scrollToElement('#log-content-bottom', 200)
-      }, 0)
-    },
-    scrollInit () {
-      this.bs = new BScroll(this.$refs.bsWrapper, {
-        mouseWheel: true, // 允许鼠标滚动
-        preventDefault: false,
-        scrollbar: { // 显示滚动条
-          fade: false,
-          interactive: false,
-        },
+    getMsLevelProject () {
+      getMsLevelProject().then(res => {
+        this.levelObj = res
+        let level = []
+        for (let k in res) {
+          level.push(k)
+        }
+        this.levelList = level
       })
-      // this.bs.on('scrollEnd', (pos) => {
-      //   console.log('xiala')
-      //   // 下拉动作
-      //   if (pos.y > 50) {
-      //     // this.loadData()
-      //   }
-      // })
     },
+    changeLevel () {
+      this.addRateForm.project = ''
+      if (this.addRateForm.level) {
+        this.projectList = this.levelObj[this.addRateForm.level] || []
+      } else {
+        this.projectList = []
+      }
+    },
+
     changeLogType (val) {
       if (this.logType !== val) {
         this.logType = val
@@ -397,47 +400,28 @@ export default {
     openRate (item) {
       // 没有数据时才去获取
       if (!item.dropList.length) {
-        item.rateLoading = true
-        // setTimeout(() => {
-        //   item.rateLoading = false
-        //   item.dropList = [
-        //     { id: 1, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-        //     { id: 2, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-        //     { id: 3, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-        //     { id: 4, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-        //   ]
-        // }, 1000)
-        // listRate(item.id).then(res => {
-
-        // }).catch(e => {
-        //   console.log('err', e)
-        // })
+        this.loadmoreRate(item)
       }
-      item.showRate = !item.showRate
+      item.showRate = this.$set(item, 'showRate', !item.showRate)
     },
     loadmoreRate (item) {
-      item.rateLoading = true
+      if (item.pageNum === undefined) {
+        item.pageNum = 0
+      }
       item.pageNum++
-      setTimeout(() => {
-        item.rateLoading = false
-        const list = [
-          { id: 1, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-          { id: 2, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-          { id: 3, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-          { id: 4, user: 'xxx', avatar: defaultAvatar, rate: 3.5, time: '2021-02-01 6:00', content: '我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容我是内容' },
-        ]
-        item.rateList.push(...list)
-      }, 1000)
-      // const data = {
-      //   id: item.id,
-      //   pageSize: item.pageSize,
-      //   pageNum: item.pageNum,
-      // }
-      // listRate(data).then(res => {
-
-      // }).catch(e => {
-      //   console.log('err', e)
-      // })
+      let params = {
+        pageNum: item.pageNum,
+        pageSize: 3
+      }
+      this.$set(item, 'rateLoading', true)
+      getMsReview(item.id, params).then(res => {
+        item.dropList.push(...item.dropList, ...res.rows)
+        if (res.page === item.pageNum) {
+          this.$set(item, 'hideMoreBtn', true)
+        }
+      }).finally(_ => {
+        this.$set(item, 'rateLoading', false)
+      })
     },
 
     // add rate
@@ -452,18 +436,20 @@ export default {
     submitAddRateForm () {
       this.$refs.addRateForm.validate((valid) => {
         if (valid) {
-          console.log('data', this.addRateForm)
-          // addRate(this.addRateForm).then(res => {
-          //   this.$message.success('添加成功')
-          //   this.closeAddRateDialog()
-          // }).catch(e => {
-          //   console.log('err', e)
-          // })
-
-          this.$message.success('添加成功')
-          this.closeAddRateDialog()
+          let data = {
+            serviceId: this.detailId,
+            level: this.addRateForm.level,
+            project: this.addRateForm.project,
+            score: this.addRateForm.score,
+            content: this.addRateForm.content,
+          }
+          addMsReview(data).then(res => {
+            this.$message.success('添加成功')
+            this.closeAddRateDialog()
+          }).catch(e => {
+            console.log('err', e)
+          })
         } else {
-          console.log('error submit!!')
           this.$message.warning('表单校验失败！')
           return false
         }
@@ -510,6 +496,25 @@ export default {
         }
       }, 1000)
     },
+
+    getMsProject () {
+      let id = this.detailId
+      id = 1
+      this.msProject.pageNum++
+      let params = {
+        pageSize: this.msProject.pageSize,
+        pageNum: this.msProject.pageNum
+      }
+      this.msProject.loading = true
+      getMsProject(id, params).then(res => {
+        this.msProject.list = [...this.msProject.list, ...res.rows]
+        if (res.page === this.msProject.pageNum) {
+          this.msProject.hasMore = false
+        }
+      }).finally(() => {
+        this.msProject.loading = false
+      })
+    }
   },
 }
 </script>

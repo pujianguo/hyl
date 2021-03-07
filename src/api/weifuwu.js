@@ -20,3 +20,8 @@ export const getMsData = params => _get('ms/cards', params)
 export const getMsDetail = id => _get(`ms/${id}`)
 export const getMsStoryList = (id, params) => _get(`story/list/${id}`, params)
 export const getMsLevel = id => _get(`ms-level/${id}`)
+export const getMsReview = (id, params) => _get(`ms-review/${id}`, params)
+export const getMsProject = (id, params) => _get(`ms-project/${id}`, params)
+export const addMsReview = params => _post('ms-review', params)
+
+export const getMsLevelProject = () => _get('ms-level/project')

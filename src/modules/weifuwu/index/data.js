@@ -44,3 +44,31 @@ this.middleInfo = [
     ],
   },
 ]
+
+
+this.nfvoList = [
+  { id: 1, title: '我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 2, title: 'DeployDepotService', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 3, title: 'DeployDepotService', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 4, title: 'DeployDepotService', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 5, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 6, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 7, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 8, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 9, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 10, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 11, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+]
+this.accessList = [
+  { id: 1, title: '我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 2, title: 'DeployDepotService', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 3, title: 'DeployDepotService', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 4, title: 'DeployDepotService', isZhongdian: true, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 5, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 6, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 7, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 8, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 9, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 10, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+  { id: 11, title: 'DeployDepotService', isZhongdian: false, username: '用户1', avatar: '', level: 'V2', count: 20 },
+]

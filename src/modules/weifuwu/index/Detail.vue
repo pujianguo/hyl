@@ -1,7 +1,7 @@
 <template>
   <!-- <el-dialog class="weifuwu-index-detail" visible.sync="visible"> -->
   <div>
-    <el-dialog class="weifuwu-index-detail" :visible="true">
+    <el-dialog class="weifuwu-index-detail" :visible="false">
       <template class="detail-header" slot="title">
         <div class="detail-header-left">{{info.title}}</div>
         <div class="detail-header-right">

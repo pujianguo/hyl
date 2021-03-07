@@ -17,8 +17,36 @@
           <div class="shuliang">
             <div class="shuliang-title">LCM</div>
             <div class="shuliang-item">
-              <div class="shuliang-item-tu"></div>
-              <div class="shuliang-item-num"></div>
+              <div class="progress">
+                <div class="bar bar-a" :style="{width: getShuliangPercentage(shuliang.lcm.numA)}"></div>
+                <div class="text">{{shuliang.lcm.numA}}</div>
+              </div>
+              <div class="progress">
+                <div class="bar bar-b" :style="{width: getShuliangPercentage(shuliang.lcm.numB)}"></div>
+                <div class="text">{{shuliang.lcm.numB}}</div>
+              </div>
+            </div>
+            <div class="shuliang-title">NFVO</div>
+            <div class="shuliang-item">
+              <div class="progress">
+                <div class="bar bar-a" :style="{width: getShuliangPercentage(shuliang.nfvo.numA)}"></div>
+                <div class="text">{{shuliang.nfvo.numA}}</div>
+              </div>
+              <div class="progress">
+                <div class="bar bar-b" :style="{width: getShuliangPercentage(shuliang.nfvo.numB)}"></div>
+                <div class="text">{{shuliang.nfvo.numB}}</div>
+              </div>
+            </div>
+            <div class="shuliang-title">Access</div>
+            <div class="shuliang-item">
+              <div class="progress">
+                <div class="bar bar-a" :style="{width: getShuliangPercentage(shuliang.access.numA)}"></div>
+                <div class="text">{{shuliang.access.numA}}</div>
+              </div>
+              <div class="progress">
+                <div class="bar bar-b" :style="{width: getShuliangPercentage(shuliang.access.numB)}"></div>
+                <div class="text">{{shuliang.access.numB}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -75,12 +103,12 @@ export default {
   components: {},
   data () {
     return {
-      showMenu: false,
-      shuliang: [
-        { title: 'LCM', numA: 12, numB: 5 },
-        { title: 'NFVO', numA: 24, numB: 6 },
-        { title: 'Access', numA: 12, numB: 3 },
-      ],
+      showMenu: true,
+      shuliang: {
+        lcm: { numA: 11, numB: 5 },
+        nfvo: { numA: 3, numB: 5 },
+        access: { numA: 15, numB: 0},
+      },
       jindu: {
         lcm: [
           { label: 'L1', value: 100 },
@@ -109,14 +137,40 @@ export default {
     }
   },
   computed: {
+    shuliangMax () {
+      let max = 0
+      for (let x in this.shuliang) {
+        let item = this.shuliang[x]
+        if (item.numA + item.numB > max) {
+          max = item.numA + item.numB
+        }
+      }
+      return max
+    }
   },
   watch: {
   },
   created () {
   },
   mounted () {
+    this.getData()
   },
   methods: {
+    getData () {
+      // TODO:
+    },
+
+
+    // 获取数量百分比
+    getShuliangPercentage (num) {
+      return parseInt(num / this.shuliangMax * 100) + '%'
+    },
+    format(percentage) {
+        return percentage === 100 ? '满' : `${percentage}`;
+      },
+    formatShuliang(num){
+      return num + ''
+    }
   },
 }
 </script>
@@ -177,7 +231,32 @@ export default {
     .shuliang{
       .shuliang-title{
         font-size: 16px;
-        margin-bottom: 10px;
+        margin-top: 20px;
+        margin-bottom: 5px;
+      }
+      .progress{
+        display: flex;
+        align-items: center;
+        .bar{
+          height: 6px;
+        }
+        .bar-a{
+          background: yellow;
+        }
+        .bar-b{
+          background: yellowgreen;
+        }
+        .text{
+          margin-left: 10px;
+          width: 20px;
+          height: 15px;
+        }
+      }
+      .el-progress-bar__innerText{
+        position: absolute;
+        right: -40px;
+        top: -3px;
+        color: rgb(96 98 102);
       }
     }
     .jindu{

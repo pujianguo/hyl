@@ -15,3 +15,5 @@ export const deleteTask = id => _delete(`oa/task/${id}`)
 export const addStar = params => _post('weifuwu/star', params)
 // 添加评论
 export const addRate = params => _post('weifuwu/rate', params)
+
+export const getMsData = params => _get('ms/cards', params)

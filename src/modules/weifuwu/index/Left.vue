@@ -99,6 +99,8 @@
 </template>
 
 <script>
+import {getMsMenu} from 'api/weifuwu'
+
 export default {
   components: {},
   data () {
@@ -157,7 +159,15 @@ export default {
   },
   methods: {
     getData () {
-      // TODO:
+      getMsMenu().then(res => {
+        // TODO:
+        console.log('sss',res)
+        // this.shuliang = res.amount
+        // this.jindu = res.progress
+        // this.wode = res.myMs
+      }).catch(err => {
+        console.log('err', err)
+      })
     },
 
 

@@ -1,7 +1,6 @@
 <template>
   <div>
-    <!-- <el-dialog class="weifuwu-index-detail" :visible.sync="visible"> -->
-    <el-dialog class="weifuwu-index-detail" :visible="true">
+    <el-dialog class="weifuwu-index-detail" :visible.sync="visible">
       <template class="detail-header" slot="title">
         <div class="detail-header-left">{{leftInfo.name}}</div>
         <div class="detail-header-right">
@@ -117,7 +116,7 @@
                       暂无数据
                     </div>
                     <div class="loadmore-wrapper" v-if="item.dropList.length && !item.hideMoreBtn">
-                      <el-button size="mini" :loading="item.rateLoading" @click="getMsProject">加载更多</el-button>
+                      <el-button size="mini" :loading="item.rateLoading" @click="loadmoreRate(item)">加载更多</el-button>
                     </div>
                   </div>
                 </div>
@@ -134,7 +133,7 @@
         </el-select>
         <div class="log-box" ref="bsWrapper">
           <div>
-            <div class="item" :class="{'item_only-one': msProject.list.length === 1}" v-for="item in msProject.list" :key="item.id">
+            <div class="item" :class="{'item_only-one': msProgress.list.length === 1}" v-for="item in msProgress.list" :key="item.id">
               <div class="line-node"></div>
               <div class="line-tail"></div>
               <div class="item-header">
@@ -156,8 +155,8 @@
               </a>
             </div>
           </div>
-          <div class="loadmore-wrapper padding" v-if="msProject.list.length && msProject.hasMore">
-            <el-button size="mini" :loading="msProject.loading" @click="loadmoreRate">加载更多</el-button>
+          <div class="loadmore-wrapper padding" v-if="msProgress.list.length && msProgress.hasMore">
+            <el-button size="mini" :loading="msProgress.loading" @click="loadmoreRate">加载更多</el-button>
           </div>
           <div id="log-content-bottom"></div>
         </div>
@@ -222,7 +221,7 @@ import defaultAvatar from '@/assets/avatar.png'
 // import BScroll from 'better-scroll'
 import './detail.scss'
 // import { addStar, addRate } from 'api/weifuwu'
-import {getMsLevelProject,getMsDetail,getMsStoryList,getMsLevel,getMsReview,getMsProject,addMsReview} from 'api/weifuwu'
+import {getMsLevelProject,getMsDetail,getMsStoryList,getMsLevel,getMsReview,getMsProgress,addMsReview,addMsProgress,updateMsBase} from 'api/weifuwu'
 
 export default {
   name: 'weifuwu-index-detail',
@@ -269,7 +268,7 @@ export default {
         inputLink: '',
         content: '',
       },
-      msProject: {
+      msProgress: {
         list: [],
         pageNum: 0,
         pageSize: 10,
@@ -313,6 +312,8 @@ export default {
         if (this.visible) {
           this.getDetailDate()
           this.getMsStoryList()
+          this.getMsLevel()
+          this.getMsProgress()
         }
       }
     },
@@ -323,12 +324,6 @@ export default {
   created () {
   },
   mounted () {
-    this.getDetailDate()
-    this.getMsStoryList()
-
-    this.getMsLevel()
-    this.getMsProject()
-
     // 获取下拉列表
     this.getMsLevelProject()
   },
@@ -352,20 +347,9 @@ export default {
       }
     },
 
-    changeLogType (val) {
-      if (this.logType !== val) {
-        this.logType = val
-        this.getLogData()
-      }
-    },
-    getLogData () {
-      console.log('get log list')
-    },
-
     // 获取微服务详情
     getDetailDate () {
       let id = this.detailId
-      id = 1
       getMsDetail(id).then(res => {
         this.leftInfo = res
       })
@@ -373,7 +357,6 @@ export default {
     // 获取关联需求
     getMsStoryList () {
       let id = this.detailId
-      id = 1
       this.msStory.pageNum++
       let params = {
         pageSize: this.msStory.pageSize,
@@ -391,7 +374,6 @@ export default {
     },
     getMsLevel(){
       let id = this.detailId
-      id = 1
       getMsLevel(id).then(res => {
         this.middleInfo = res
       })
@@ -446,6 +428,7 @@ export default {
           addMsReview(data).then(res => {
             this.$message.success('添加成功')
             this.closeAddRateDialog()
+            this.refreshReviewList(data.level, data.project)
           }).catch(e => {
             console.log('err', e)
           })
@@ -455,17 +438,65 @@ export default {
         }
       })
     },
+    // 更新评论列表数据
+    refreshReviewList(level, project){
+      let levelObj = this.middleInfo.find(x => x.level === level)
+      if (!levelObj) {
+        return
+      }
+      let projectObj = levelObj.list.find(x => x.project === project && x.drop)
+      if (!projectObj){
+        return
+      }
+      projectObj.dropList = []
+      projectObj.pageNum = 0
+      this.loadmoreRate(projectObj)
+    },
+
 
     // 标记
     handleStar () {
-      this.info.star = !this.info.star
-      // addStar(this.info.star).then(res => {
-      //   console.log('res')
-      // }).catch(e => {
-      //   console.log('e', e)
-      // })
+      this.leftInfo.mark = !this.leftInfo.mark
+      let data = {
+        id: this.detailId,
+        mark: this.leftInfo.mark
+      }
+      updateMsBase(data).then(res => {
+      }).catch(err => {
+        this.leftInfo.mark = !this.leftInfo.mark
+        cosole.log('err', err)
+      })
     },
 
+    // 右侧进度
+    changeLogType (val) {
+      if (this.logType !== val) {
+        this.logType = val
+        this.refreshMsProgress()
+      }
+    },
+    refreshMsProgress () {
+      this.msProgress.pageNum = 0
+      this.getMsProgress
+    },
+    getMsProgress () {
+      let id = this.detailId
+      this.msProgress.pageNum++
+      let params = {
+        pageSize: this.msProgress.pageSize,
+        pageNum: this.msProgress.pageNum,
+        type: this.logType
+      }
+      this.msProgress.loading = true
+      getMsProgress(id, params).then(res => {
+        this.msProgress.list = [...this.msProgress.list, ...res.rows]
+        if (res.page === this.msProgress.pageNum) {
+          this.msProgress.hasMore = false
+        }
+      }).finally(() => {
+        this.msProgress.loading = false
+      })
+    },
     addLink () {
       if (this.logForm.inputLink === '') {
         this.$message.warning('请输入链接地址')
@@ -485,8 +516,13 @@ export default {
         this.$message.warning('请输入内容')
         return
       }
+      let data = {
+        serviceId: this.detailId,
+        link: this.logForm.link,
+        content: this.logForm.content,
+      }
       this.submitLogFormBtnLoading = true
-      setTimeout(() => {
+      addMsProgress(data).then(res => {
         this.submitLogFormBtnLoading = false
         this.$message.success('发布成功')
         this.logForm = {
@@ -494,27 +530,12 @@ export default {
           link: '',
           content: '',
         }
-      }, 1000)
-    },
-
-    getMsProject () {
-      let id = this.detailId
-      id = 1
-      this.msProject.pageNum++
-      let params = {
-        pageSize: this.msProject.pageSize,
-        pageNum: this.msProject.pageNum
-      }
-      this.msProject.loading = true
-      getMsProject(id, params).then(res => {
-        this.msProject.list = [...this.msProject.list, ...res.rows]
-        if (res.page === this.msProject.pageNum) {
-          this.msProject.hasMore = false
-        }
-      }).finally(() => {
-        this.msProject.loading = false
+        this.refreshMsProgress()
+      }).catch(err => {
+        this.submitLogFormBtnLoading = false
+        console.log('err', err)
       })
-    }
+    },
   },
 }
 </script>

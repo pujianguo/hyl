@@ -28,26 +28,26 @@
       <div class="content-item">
         <div class="title">
           <span>需求池</span>
-          <span>{{xuqiuList.length}}</span>
+          <span>{{xuqiuListSize}}</span>
           <el-button class="add-btn" type="primary" @click="openAddXuqiuDialog">新建需求池</el-button>
         </div>
         <div class="list">
           <div class="list-item" v-for="item in xuqiuList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
               <div class="title">
-                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-                {{item.title}}
+                <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
+                {{item.name}}
               </div>
-              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
+              <div class="flag" v-if="item.mark"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2">
               <el-avatar size="small" :src="item.avatar || defaultAvatar"></el-avatar>
-              <span class="username">{{item.user}}</span>
-              <el-tag class="tag" type="primary" size="mini">{{item.line}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.start}}</el-tag>
+              <span class="username">{{item.ownerZN}}</span>
+              <el-tag class="tag" type="primary" size="mini">{{item.storyCode}}k</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.startOrDeliveryTime}}</el-tag>
             </div>
             <div class="part3">
-              <el-tag class="tag" v-for="(tag, index) in item.tags" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
+              <el-tag class="tag" v-for="(tag, index) in item.microserviceInfo.split(',')" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
             </div>
           </div>
         </div>
@@ -55,32 +55,26 @@
       <div class="content-item">
         <div class="title">
           <span>NFVO</span>
-          <span>{{nfvoList.length}}</span>
+          <span>{{nfvoListSize}}</span>
         </div>
         <div class="list">
           <div class="list-item" v-for="item in nfvoList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
               <div class="title">
-                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-                {{item.title}}
+                <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
+                {{item.name}}
               </div>
-              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
+              <div class="flag" v-if="item.mark"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2">
               <el-avatar size="small" :src="item.avatar || defaultAvatar"></el-avatar>
-              <span class="username">{{item.user}}</span>
-              <el-tag class="tag" type="warning" size="mini">{{item.status}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.line}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.start}}</el-tag>
+              <span class="username">{{item.ownerZN}}</span>
+              <el-tag class="tag" :type="item.implementStatus === 'Open' ? 'success' : 'warning'" size="mini">{{item.implementStatus}}</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.storyCode}}k</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.startOrDeliveryTime}}</el-tag>
             </div>
             <div class="part3">
-              <el-tag class="tag" v-for="(tag, index) in item.tags" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
-            </div>
-            <div class="part4">
-              <el-tag type="info">
-                <i class="el-icon-date"></i>
-                {{item.updateTime}}
-              </el-tag>
+              <el-tag class="tag" v-for="(tag, index) in item.microserviceInfo.split(',')" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
             </div>
           </div>
         </div>
@@ -88,32 +82,26 @@
       <div class="content-item">
         <div class="title">
           <span>Access</span>
-          <span>{{accessList.length}}</span>
+          <span>{{accessListSize}}</span>
         </div>
         <div class="list">
           <div class="list-item" v-for="item in accessList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
               <div class="title">
-                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-                {{item.title}}
+                <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
+                {{item.name}}
               </div>
-              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
+              <div class="flag" v-if="item.mark"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2">
               <el-avatar size="small" :src="item.avatar || defaultAvatar"></el-avatar>
-              <span class="username">{{item.user}}</span>
-              <el-tag class="tag" type="warning" size="mini">{{item.status}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.line}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.start}}</el-tag>
+              <span class="username">{{item.ownerZN}}</span>
+              <el-tag class="tag" :type="item.implementStatus === 'Open' ? 'success' : 'warning'" size="mini">{{item.implementStatus}}</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.storyCode}}k</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.startOrDeliveryTime}}</el-tag>
             </div>
             <div class="part3">
-              <el-tag class="tag" v-for="(tag, index) in item.tags" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
-            </div>
-            <div class="part4">
-              <el-tag type="info">
-                <i class="el-icon-date"></i>
-                {{item.updateTime}}
-              </el-tag>
+              <el-tag class="tag" v-for="(tag, index) in item.microserviceInfo.split(',')" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
             </div>
           </div>
         </div>
@@ -121,32 +109,26 @@
       <div class="content-item">
         <div class="title">
           <span>LCM</span>
-          <span>{{lcmList.length}}</span>
+          <span>{{lcmListSize}}</span>
         </div>
         <div class="list">
           <div class="list-item" v-for="item in lcmList" :key="item.id" @click="openDetailDialog(item.id)">
             <div class="part1">
               <div class="title">
-                <el-tag class="tag" type="success" v-if="item.isZhongdian" effect="dark" size="mini">重点</el-tag>
-                {{item.title}}
+                <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
+                {{item.name}}
               </div>
-              <div class="flag" v-if="item.isZhongdian"><i class="el-icon-s-flag"></i></div>
+              <div class="flag" v-if="item.mark"><i class="el-icon-s-flag"></i></div>
             </div>
             <div class="part2">
               <el-avatar size="small" :src="item.avatar || defaultAvatar"></el-avatar>
-              <span class="username">{{item.user}}</span>
-              <el-tag class="tag" type="warning" size="mini">{{item.status}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.line}}</el-tag>
-              <el-tag class="tag" type="primary" size="mini">{{item.start}}</el-tag>
+              <span class="username">{{item.ownerZN}}</span>
+              <el-tag class="tag" :type="item.implementStatus === 'Open' ? 'success' : 'warning'" size="mini">{{item.implementStatus}}</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.storyCode}}k</el-tag>
+              <el-tag class="tag" type="primary" size="mini">{{item.startOrDeliveryTime}}</el-tag>
             </div>
             <div class="part3">
-              <el-tag class="tag" v-for="(tag, index) in item.tags" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
-            </div>
-            <div class="part4">
-              <el-tag type="info">
-                <i class="el-icon-date"></i>
-                {{item.updateTime}}
-              </el-tag>
+              <el-tag class="tag" v-for="(tag, index) in item.microserviceInfo.split(',')" :key="index" effect="dark" size="mini">{{tag}}</el-tag>
             </div>
           </div>
         </div>
@@ -162,6 +144,7 @@
 import defaultAvatar from '@/assets/avatar.png'
 import DetailDialog from './DetailDialog'
 import AddDialog from './AddDialog'
+import {getStoryData} from 'api/chonggou'
 
 export default {
   components: { DetailDialog, AddDialog },
@@ -175,9 +158,13 @@ export default {
         shaixuan: '',
       },
       xuqiuList: [],
+      xuqiuListSize: 0,
       nfvoList: [],
+      nfvoListSize: 0,
       accessList: [],
+      accessListSize: 0,
       lcmList: [],
+      lcmListSize: 0,
 
       detailDialogVisible: false,
       detailId: 0,
@@ -196,58 +183,19 @@ export default {
   },
   methods: {
     getData () {
-      this.xuqiuList = [
-        { id: 1, title: '我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题我是标题', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3', '关联微服务3'] },
-        { id: 2, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 3, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 4, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 5, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 6, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 7, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 8, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 9, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 10, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-        { id: 11, title: '我是标我是标题', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', tags: ['关联微服务1', '关联微服务2', '关联微服务3'] },
-      ]
-      this.nfvoList = [
-        { id: 1, title: '我是标题我是标题我是标题我是标题我', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 2, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 3, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 4, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 5, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 6, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 7, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 8, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 9, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 10, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 11, title: '我是标我是标题', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-      ]
-      this.accessList = [
-        { id: 1, title: '我是标题我是标题我是标题我是标题我', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 2, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 3, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 4, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 5, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 6, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 7, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 8, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 9, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 10, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 11, title: '我是标我是标题', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-      ]
-      this.lcmList = [
-        { id: 1, title: '我是标题我是标题我是标题我是标题我', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 2, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 3, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 4, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 5, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 6, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 7, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 8, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 9, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 10, title: '我是标题我是标', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-        { id: 11, title: '我是标我是标题', isZhongdian: true, avatar: defaultAvatar, user: '克里斯', line: '10k', start: '2020-2-3提出', status: 'Open', tags: ['关联微服务1', '关联微服务2', '关联微服务3'], updateTime: '3分钟之前' },
-      ]
+      getStoryData().then(res => {
+        this.xuqiuList = res['story-pool'].list
+        this.xuqiuListSize = res['story-pool'].size
+        this.nfvoList = res['nfvo'].list
+        this.nfvoListSize = res['nfvo'].size
+        this.accessList = res['access'].list
+        this.accessListSize = res['access'].size
+        this.lcmList = res['vnf-lcm'].list
+        this.lcmListSize = res['vnf-lcm'].size
+        console.log("res",res)
+      }).catch(err => {
+        console.log('err', err)
+      })
     },
 
     openDetailDialog (id) {

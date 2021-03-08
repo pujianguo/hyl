@@ -7,21 +7,21 @@
         <div class="card-body">
           <div class="shuliang">
             <div class="shuliang-item">
-              <div class="item-count">{{shuliang.all}}</div>
+              <div class="item-count">{{amount.total}}</div>
               <div class="item-label">
                 <div class="icon icon-a"></div>
                 <div class="text">总数</div>
               </div>
             </div>
             <div class="shuliang-item">
-              <div class="item-count">{{shuliang.yue}}</div>
+              <div class="item-count">{{amount.month}}</div>
               <div class="item-label">
                 <div class="icon icon-b"></div>
                 <div class="text">本月新增</div>
               </div>
             </div>
             <div class="shuliang-item">
-              <div class="item-count">{{shuliang.zhou}}</div>
+              <div class="item-count">{{amount.week}}</div>
               <div class="item-label">
                 <div class="icon icon-c"></div>
                 <div class="text">本周截止</div>
@@ -36,21 +36,51 @@
           <span>进度</span>
         </div>
         <div class="card-body">
-          <div class="jindu">
-            <div class="jindu-title">LCM</div>
-            <div class="jindu-item" v-for="(item, index) in jindu.lcm" :key="'lcm'+index">
-              <div class="jindu-item-label">{{item.label}}</div>
-              <el-progress class="jindu-item-progress" :percentage="item.value"></el-progress>
+          <div class="progress">
+            <div class="progress-title">LCM</div>
+            <div class="progress-item">
+              <div class="progress-bar">
+                <div class="bar bar-a" :style="{width: getProgressPercentage(progress['vnf-lcm'].total)}"></div>
+                <div class="text">{{progress['vnf-lcm'].total}}</div>
+              </div>
+              <div class="progress-bar">
+                <div class="bar bar-b" :style="{width: getProgressPercentage(progress['vnf-lcm'].month)}"></div>
+                <div class="text">{{progress['vnf-lcm'].month}}</div>
+              </div>
+              <div class="progress-bar">
+                <div class="bar bar-c" :style="{width: getProgressPercentage(progress['vnf-lcm'].week)}"></div>
+                <div class="text">{{progress['vnf-lcm'].week}}</div>
+              </div>
             </div>
-            <div class="jindu-title">NFVO</div>
-            <div class="jindu-item" v-for="(item, index) in jindu.nfvo" :key="'nfvo'+index">
-              <div class="jindu-item-label">{{item.label}}</div>
-              <el-progress class="jindu-item-progress" :percentage="item.value"></el-progress>
+            <div class="progress-title">NFVO</div>
+            <div class="progress-item">
+              <div class="progress-bar">
+                <div class="bar bar-a" :style="{width: getProgressPercentage(progress['nfvo'].total)}"></div>
+                <div class="text">{{progress['nfvo'].total}}</div>
+              </div>
+              <div class="progress-bar">
+                <div class="bar bar-b" :style="{width: getProgressPercentage(progress['nfvo'].month)}"></div>
+                <div class="text">{{progress['nfvo'].month}}</div>
+              </div>
+              <div class="progress-bar">
+                <div class="bar bar-c" :style="{width: getProgressPercentage(progress['nfvo'].week)}"></div>
+                <div class="text">{{progress['nfvo'].week}}</div>
+              </div>
             </div>
-            <div class="jindu-title">Access</div>
-            <div class="jindu-item" v-for="(item, index) in jindu.access" :key="'access'+index">
-              <div class="jindu-item-label">{{item.label}}</div>
-              <el-progress class="jindu-item-progress" :percentage="item.value"></el-progress>
+            <div class="progress-title">Access</div>
+            <div class="progress-item">
+              <div class="progress-bar">
+                <div class="bar bar-a" :style="{width: getProgressPercentage(progress['access'].total)}"></div>
+                <div class="text">{{progress['access'].total}}</div>
+              </div>
+              <div class="progress-bar">
+                <div class="bar bar-b" :style="{width: getProgressPercentage(progress['access'].month)}"></div>
+                <div class="text">{{progress['access'].month}}</div>
+              </div>
+              <div class="progress-bar">
+                <div class="bar bar-c" :style="{width: getProgressPercentage(progress['access'].week)}"></div>
+                <div class="text">{{progress['access'].week}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -62,9 +92,17 @@
         </div>
         <div class="card-body">
           <div class="wode">
-            <div class="wode-item" v-for="(item, index) in wode" :key="index">
-              <span>{{item.label}}</span>
-              <span>{{item.value}}</span>
+            <div class="wode-item">
+              <span>我负责的规则</span>
+              <span>{{myPlan.charge}}</span>
+            </div>
+            <div class="wode-item">
+              <span>我参与的规则</span>
+              <span>{{myPlan.involve}}</span>
+            </div>
+            <div class="wode-item">
+              <span>红旗规则</span>
+              <span>{{myPlan.mark}}</span>
             </div>
           </div>
         </div>
@@ -78,49 +116,80 @@
 </template>
 
 <script>
+import { getStoryMenu } from 'api/chonggou'
 export default {
   components: {},
   data () {
     return {
-      showMenu: false,
-      shuliang: {
-        all: 12,
-        yue: 3,
-        zhou: 2,
+      showMenu: true,
+      amount: {
+        total: 0,
+        month: 0,
+        week: 0
       },
-      jindu: {
-        lcm: {
-          all: 12,
+      progress: {
+        "vnf-lcm": {
+          total: 0,
+          week: 0,
+          month: 0
         },
-        nfvo: [
-          { label: 'L1', value: 100 },
-          { label: 'L2', value: 90 },
-          { label: 'L3', value: 0 },
-          { label: 'L4', value: 0 },
-        ],
-        access: [
-          { label: 'L1', value: 100 },
-          { label: 'L2', value: 90 },
-          { label: 'L3', value: 0 },
-          { label: 'L4', value: 0 },
-        ],
+        nfvo: {
+          total: 0,
+          week: 0,
+          month: 0
+        },
+        access: {
+          total: 0,
+          week: 0,
+          month: 0
+        }
+      },
+      myPlan: {
+        charge: 0,
+        involve: 0,
+        mark: 0
       },
       wode: [
         { label: '我负责的规则', value: 0 },
         { label: '我参与的规则', value: 0 },
-        { label: '红旗规则', value: 0 },
+        { label: '', value: 0 },
       ],
     }
   },
   computed: {
+    progressMax () {
+      let max = 0
+      for (let x in this.progress) {
+        let item = this.progress[x]
+        if (item.total + item.month + item.week > max) {
+          max = item.total + item.month + item.week
+        }
+      }
+      return max
+    }
   },
   watch: {
   },
   created () {
   },
   mounted () {
+    this.getData()
   },
   methods: {
+    getData(){
+      getStoryMenu().then(res => {
+        this.amount = res.amount
+        this.progress = res.progress
+        this.myPlan = res.myPlan
+      }).catch(err => {
+        console.log('err', err)
+      })
+    },
+
+    // 获取数量百分比
+    getProgressPercentage (num) {
+      return parseInt(num / this.progressMax * 100) + '%'
+    },
   },
 }
 </script>
@@ -194,20 +263,31 @@ export default {
         }
       }
     }
-    .jindu{
-      .jindu-title{
+    .progress{
+      .progress-title{
         font-size: 16px;
-        margin-bottom: 10px;
+        margin-top: 20px;
+        margin-bottom: 5px;
       }
-      .jindu-item{
-        width: 100%;
-        height: 30px;
+      .progress-bar{
         display: flex;
-        &-label{
-          width: 25px;
+        align-items: center;
+        .bar{
+          height: 6px;
         }
-        &-progress{
-          flex: 1;
+        .bar-a{
+          background: green;
+        }
+        .bar-b{
+          background: blueviolet;
+        }
+        .bar-c{
+          background: red;
+        }
+        .text{
+          margin-left: 10px;
+          width: 20px;
+          height: 15px;
         }
       }
     }

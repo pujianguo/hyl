@@ -175,12 +175,6 @@ export default {
     getShuliangPercentage (num) {
       return parseInt(num / this.shuliangMax * 100) + '%'
     },
-    format(percentage) {
-        return percentage === 100 ? '满' : `${percentage}`;
-      },
-    formatShuliang(num){
-      return num + ''
-    }
   },
 }
 </script>

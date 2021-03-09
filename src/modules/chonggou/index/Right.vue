@@ -2,21 +2,21 @@
   <div class="chonggou-index-right">
     <div class="header">
       <el-input class="input" v-model="search.input" placeholder="搜索">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="getData"></el-button>
       </el-input>
-      <el-select class="select" v-model="search.year" placeholder="全部年份">
+      <el-select class="select" v-model="search.year" placeholder="全部年份" @change="getData">
         <el-option label="2018" value="2018"></el-option>
         <el-option label="2019" value="2019"></el-option>
         <el-option label="2020" value="2020"></el-option>
         <el-option label="2021" value="2021"></el-option>
       </el-select>
-      <el-select class="select" v-model="search.sort" placeholder="排序">
+      <el-select class="select" v-model="search.sort" placeholder="排序" @change="getData">
         <el-option label="sort1" value="sort1"></el-option>
         <el-option label="sort2" value="sort2"></el-option>
         <el-option label="sort3" value="sort3"></el-option>
         <el-option label="sort4" value="sort4"></el-option>
       </el-select>
-      <el-select class="select" v-model="search.shaixuan" placeholder="筛选">
+      <el-select class="select" v-model="search.shaixuan" placeholder="筛选" @change="getData">
         <el-option label="shaixuan1" value="shaixuan1"></el-option>
         <el-option label="shaixuan2" value="shaixuan2"></el-option>
         <el-option label="shaixuan3" value="shaixuan3"></el-option>

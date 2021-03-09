@@ -477,7 +477,8 @@ export default {
     },
     refreshMsProgress () {
       this.msProgress.pageNum = 0
-      this.getMsProgress
+      this.msProgress.list = []
+      this.getMsProgress()
     },
     getMsProgress () {
       let id = this.detailId

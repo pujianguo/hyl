@@ -13,3 +13,5 @@ import { _get, _post, _put, _delete } from '../utils/request'
 
 export const getStoryMenu = () => _get('story/menu')
 export const getStoryData = () => _get('story/cards')
+export const getMsListByGroupId = groupId => _get(`ms-list/${groupId}`)
+export const getUserList = value => _get(`user/${value}`)

@@ -1,40 +1,54 @@
 <template>
   <!-- <el-dialog class="chonggou-index-detail" visible.sync="visible"> -->
   <div>
-    <el-dialog class="chonggou-index-add" title="新建需求" :visible="false">
+    <el-dialog class="chonggou-index-add" title="新建需求" :visible="true">
       <div class="detail-left" v-loading="leftLoading">
-        <el-form class="add-rate-content" :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px">
-          <el-form-item label="重构事务" prop="a">
-            <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="editForm.a"></el-input>
-            <!-- <el-select v-model="editForm.a" placeholder="请选择a" class="margin-right">
-              <el-option label="L1" value="l1"></el-option>
-              <el-option label="L2" value="l2"></el-option>
-            </el-select>
-            <el-select v-model="editForm.b" placeholder="请选择b">
-              <el-option label="简洁" value="l1"></el-option>
-              <el-option label="简洁2" value="l2"></el-option>
-            </el-select> -->
+        <el-form class="add-rate-content" :model="editForm" :rules="editFormRules" ref="editForm" label-width="120px">
+          <el-form-item label="重构事务" prop="name">
+            <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="editForm.name"></el-input>
           </el-form-item>
-          <el-form-item label="选择域" prop="b">
-            <el-radio-group v-model="editForm.b">
+          <el-form-item label="选择域" prop="group">
+            <el-radio-group v-model="editForm.group" @change="handlerGroupChange">
               <el-radio-button label="NFVO"></el-radio-button>
               <el-radio-button label="VNF-LCM"></el-radio-button>
               <el-radio-button label="Access"></el-radio-button>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="关联微服务" prop="microserviceInfo">
+            <el-select class="select" v-model="editForm.microserviceInfo" multiple placeholder="关联微服务" style="width: 100%;">
+              <el-option v-for="(item, index) in msList" :key="index" :label="item" :value="item"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="责任人" prop="owner">
+            <template v-if="editForm.owner.id">
+              <el-avatar size="small" :src="editForm.owner.avatar || defaultAvatar"></el-avatar>
+              <el-button type="primary" icon="el-icon-edit" circle @click="openSelectDialog('owner')"></el-button>
+            </template>
+            <template v-else>
+              <el-button type="primary" icon="el-icon-plus" circle @click="openSelectDialog('owner')"></el-button>
+            </template>
+
+          </el-form-item>
+          <el-form-item label="参与者">
+            <el-button type="primary" icon="el-icon-plus" circle></el-button>
+          </el-form-item>
           <el-form-item label="预计起止时间" prop="time">
             <el-date-picker v-model="editForm.time"
-              type="datetimerange"
+              type="daterange"
               range-separator="至"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间">
+              start-placeholder="开始日期"
+              value-format="yyyy-MM-dd"
+              end-placeholder="结束日期">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="预估工作量" prop="line">
-            <el-input-number v-model="editForm.line" :precision="1" :min="1" :max="10000"></el-input-number> <span>k</span>
+          <el-form-item label="预估工作量" prop="storyCode">
+            <el-input-number v-model="editForm.storyCode" :precision="1" :min="1" :max="10000"></el-input-number> <span>k</span>
           </el-form-item>
-          <el-form-item label="说明" prop="shuoming">
-            <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="editForm.shuoming"></el-input>
+          <el-form-item label="消减代码量" prop="reduceCode">
+            <el-input-number v-model="editForm.reduceCode" :precision="1" :min="1" :max="10000"></el-input-number> <span>k</span>
+          </el-form-item>
+          <el-form-item label="说明" prop="storyDesp">
+            <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="editForm.storyDesp"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -133,6 +147,22 @@
         <el-button type="primary" size="medium" @click="submitEditForm">存入需求池</el-button>
       </div>
     </el-dialog>
+
+    <!-- 选择用户弹框 -->
+    <el-dialog class="search-user-dialog" :title="selectUserType === 'owner' ? '选择负责人' : '选择参与者'" :visible="selectUserDialogVisible" width="500px">
+      <div class="search-user">
+        <el-input class="input" v-model="selectUserForm.name" placeholder="搜索">
+          <el-button slot="append" icon="el-icon-search" @click="selectUserHandler"></el-button>
+        </el-input>
+      </div>
+      <div class="search-list">
+        <div class="item" v-for="item in selectUserList" :key="item.id" @click="handleSelectUser(item)">
+          <el-avatar size="small" :src="item.avatar || defaultAvatar"></el-avatar>
+          <span class="zn">{{item.nameZn}}</span>
+          <span class="en">({{item.nameEn}})</span>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -140,6 +170,7 @@
 import defaultAvatar from '@/assets/avatar.png'
 import './AddDialog.scss'
 // import { addStar, addRate } from 'api/chonggou'
+import {getMsListByGroupId, getUserList} from 'api/chonggou'
 
 export default {
   name: 'chonggou-index-detail',
@@ -154,31 +185,59 @@ export default {
 
       leftLoading: false,
       rightLoading: false,
+      defaultAvatar: defaultAvatar,
 
       editForm: {
-        a: '',
-        b: '',
-        line: 1,
+        name: '',
+        group: '',
+        microserviceInfo: [],
+        storyCode: 1,
         time: null,
-        shuoming: '',
+        owner: {},
+        party: [],
+        storyDesp: '',
+        reduceCode: '',
+        coreAlmNo: '',
       },
       editFormRules: {
-        a: [
-          { required: true, message: '请选择a', trigger: 'blur' },
+        name: [
+          { required: true, message: '请填写事务名称', trigger: 'blur' },
         ],
-        b: [
-          { required: true, message: '请选择b', trigger: 'change' },
+        group: [
+          { required: true, message: '请选择域', trigger: 'change' },
         ],
-        line: [
+        owner: [
+          { required: true, message: '请选择责任人', trigger: 'change' },
+        ],
+        microserviceInfo: [
+          { required: true, message: '请选择关联微服务', trigger: 'change' },
+        ],
+        storyCode: [
           { required: true, message: '请填写工作量', trigger: 'blur' },
         ],
-        shuoming: [
+        reduceCode: [
+          { required: false, message: '请填写消减代码量', trigger: 'blur' },
+        ],
+        storyDesp: [
           { required: true, message: '请填写说明', trigger: 'blur' },
         ],
+        time: [
+          { required: true, message: '请选择起止时间', trigger: 'blur' },
+        ]
       },
+
+      msList: [],
 
       searchValue: '',
       xuqiuInfo: null,
+
+      selectUserDialogVisible: false,
+      selectUserType: 'owner',
+      selectUserForm: {
+        name: '',
+      },
+      selectUserList: [],
+
     }
   },
   computed: {
@@ -199,16 +258,32 @@ export default {
   created () {
   },
   mounted () {
-    this.handleSearch()
   },
   methods: {
+    getDetailDate () {
+
+    },
+
     handleStart () {
 
     },
     submitEditForm () {
       this.$refs.editForm.validate((valid) => {
         if (valid) {
-          console.log('data', this.editForm)
+          const data = {
+            name: this.editForm.name,
+            group: this.editForm.group,
+            microserviceInfo: this.editForm.microserviceInfo.join(','),
+            storyCode: this.editForm.storyCode,
+            storyDesp: this.editForm.storyDesp,
+            reduceCode: this.editForm.reduceCode,
+            estStartTime: this.editForm.time[0],
+            estEndTime: this.editForm.time[1],
+            owner: {},
+            party: [],
+            coreAlmNo: this.searchValue,
+          }
+          console.log('data', data)
           // addRate(this.editForm).then(res => {
           //   this.$message.success('添加成功')
           //   this.closeAddRateDialog()
@@ -228,6 +303,10 @@ export default {
 
     // 查询需求
     handleSearch () {
+      if (this.searchValue === '') {
+        this.$message.warning('请填写需求编号')
+        return
+      }
       this.rightLoading = true
       setTimeout(() => {
         this.rightLoading = false
@@ -266,6 +345,54 @@ export default {
     handleResetXuqiu () {
       this.xuqiuInfo = null
     },
+
+    handlerGroupChange () {
+      this.editForm.microserviceInfo = []
+      getMsListByGroupId(this.editForm.group).then(res => {
+        this.msList = res
+      }).catch(err => {
+        this.msList = []
+        console.log('err', err)
+      })
+    },
+
+    // 选择用户相关
+    // 搜索用户
+    openSelectDialog (type) {
+      this.selectUserType = type
+      this.selectUserDialogVisible = true
+    },
+    selectUserHandler () {
+      if (this.selectUserForm.name === '') {
+        this.$message.warning('请输入搜索的用户')
+        return
+      }
+      getUserList(this.selectUserForm.name).then(res => {
+        this.selectUserList = res
+      }).catch(err => {
+        this.selectUserList = []
+        console.log('err', err)
+      })
+    },
+    // 点击用户执行选择
+    handleSelectUser(item) {
+      if (this.selectUserType === 'owner') {
+        this.editForm.owner = {
+          id: item.id,
+          name: item.nameZn,
+          avatar: item.avatar
+        }
+      } else {
+        if (!this.editForm.party.find(x => x.id === item.id)) {
+          this.editForm.party.push({
+            id: item.id,
+            name: item.nameZn,
+            avatar: item.avatar
+          })
+        }
+      }
+      this.selectUserDialogVisible = false
+    }
   },
 }
 </script>

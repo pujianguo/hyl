@@ -101,7 +101,7 @@ $border-color: #ccc;
             padding: 8px 0;
             .label{
               width: 120px;
-              color: rgb(144 147 153);
+              color: rgb(144, 147, 153);
             }
             .value{
               flex: 1;
@@ -116,4 +116,32 @@ $border-color: #ccc;
       }
     }
   }
+}
+
+.search-user-dialog{
+  .search-user{
+  }
+  .search-list{
+    height: 300px;
+    padding: 20px 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    .item{
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      cursor: pointer;
+      &:hover{
+        background-color: #eee;
+      }
+      .zn{
+        margin-left: 8px;
+        margin-right: 5px;
+      }
+      .en{
+
+      }
+    }
+  }
+
 }

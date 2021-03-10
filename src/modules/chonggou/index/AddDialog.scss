@@ -43,18 +43,18 @@ $border-color: #ccc;
             .label{
               width: 100px;
             }
-            .value{
-              width: 0;
-              flex: 1;
-              display: flex;
-              align-items: center;
-              overflow-x: auto;
-              .avatar{
-                flex-shrink: 0;
-                margin-right: 5px;
-                cursor: pointer;
-              }
-            }
+
+          }
+        }
+        .el-form-item__content{
+          .avatar{
+            flex-shrink: 0;
+            margin-right: 5px;
+            cursor: pointer;
+          }
+          .party{
+            overflow-x: auto;
+            overflow-y: hidden;
           }
         }
         .rule{

@@ -32,7 +32,7 @@
           <el-button class="add-btn" type="primary" @click="openAddXuqiuDialog">新建需求池</el-button>
         </div>
         <div class="list">
-          <div class="list-item" v-for="item in xuqiuList" :key="item.id" @click="openDetailDialog(item.id)">
+          <div class="list-item" v-for="item in xuqiuList" :key="item.id" @click="openUpdateXuqiuDialog(item)">
             <div class="part1">
               <div class="title">
                 <el-tag class="tag" type="success" v-if="item.grade" effect="dark" size="mini">重点</el-tag>
@@ -136,7 +136,7 @@
     </div>
 
     <detail-dialog v-model="detailDialogVisible" :detailId="detailId"></detail-dialog>
-    <add-dialog v-model="addDialogVisible"></add-dialog>
+    <add-dialog v-model="addDialogVisible" :detailId="updateId"></add-dialog>
   </div>
 </template>
 
@@ -170,6 +170,7 @@ export default {
       detailId: 0,
 
       addDialogVisible: false,
+      updateId: 0,
     }
   },
   computed: {
@@ -204,8 +205,13 @@ export default {
     },
 
     openAddXuqiuDialog () {
+      this.updateId = 0
       this.addDialogVisible = true
     },
+    openUpdateXuqiuDialog(item){
+      this.updateId = item.id
+      this.addDialogVisible = true
+    }
   },
 }
 </script>

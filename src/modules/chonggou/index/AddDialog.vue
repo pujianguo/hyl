@@ -1,7 +1,6 @@
 <template>
-  <!-- <el-dialog class="chonggou-index-detail" visible.sync="visible"> -->
   <div>
-    <el-dialog class="chonggou-index-add" title="新建需求" :visible="true">
+    <el-dialog class="chonggou-index-add" :title="isUpdate ? '修改需求' : '新建需求'" :visible.sync="visible" @close="handleCloseDialog">
       <div class="detail-left" v-loading="leftLoading">
         <el-form class="add-rate-content" :model="editForm" :rules="editFormRules" ref="editForm" label-width="120px">
           <el-form-item label="重构事务" prop="name">
@@ -21,8 +20,11 @@
           </el-form-item>
           <el-form-item label="责任人" prop="owner">
             <template v-if="editForm.owner.id">
-              <el-avatar size="small" :src="editForm.owner.avatar || defaultAvatar"></el-avatar>
-              <el-button type="primary" icon="el-icon-edit" circle @click="openSelectDialog('owner')"></el-button>
+              <div class="flex-center">
+                <el-avatar class="margin-right" size="small" :src="editForm.owner.avatar || defaultAvatar"></el-avatar>
+                <span class="margin-right-l">{{editForm.owner.name}}</span>
+                <el-button type="primary" icon="el-icon-edit" circle @click="openSelectDialog('owner')"></el-button>
+              </div>
             </template>
             <template v-else>
               <el-button type="primary" icon="el-icon-plus" circle @click="openSelectDialog('owner')"></el-button>
@@ -30,7 +32,13 @@
 
           </el-form-item>
           <el-form-item label="参与者">
-            <el-button type="primary" icon="el-icon-plus" circle></el-button>
+            <div class="flex-center party">
+              <el-tooltip placement="top" v-for="(item, index) in editForm.party" :key="index">
+                <div slot="content">{{item.name}}</div>
+                <el-avatar class="avatar margin-right" size="small" :src="item.avatar" @click.native.stop="deleteParty(index)"></el-avatar>
+              </el-tooltip>
+              <el-button type="primary" icon="el-icon-plus" circle @click="openSelectDialog('party')"></el-button>
+            </div>
           </el-form-item>
           <el-form-item label="预计起止时间" prop="time">
             <el-date-picker v-model="editForm.time"
@@ -143,15 +151,15 @@
         </div>
       </div>
       <div class="" slot="footer">
-        <el-button type="primary" size="medium" @click="handleStart">立即开始</el-button>
-        <el-button type="primary" size="medium" @click="submitEditForm">存入需求池</el-button>
+        <el-button type="primary" size="medium" @click="handleStart" v-if="isUpdate" :loading="startBtnLoading">立即开始</el-button>
+        <el-button type="primary" size="medium" @click="submitEditForm" :loading="submitBtnLoading">存入需求池</el-button>
       </div>
     </el-dialog>
 
     <!-- 选择用户弹框 -->
-    <el-dialog class="search-user-dialog" :title="selectUserType === 'owner' ? '选择负责人' : '选择参与者'" :visible="selectUserDialogVisible" width="500px">
+    <el-dialog class="search-user-dialog" :title="selectUserType === 'owner' ? '选择负责人' : '选择参与者'" :visible.sync="selectUserDialogVisible" width="500px">
       <div class="search-user">
-        <el-input class="input" v-model="selectUserForm.name" placeholder="搜索">
+        <el-input class="input" v-model="selectUserForm.name" placeholder="搜索" @input="selectUserHandler">
           <el-button slot="append" icon="el-icon-search" @click="selectUserHandler"></el-button>
         </el-input>
       </div>
@@ -170,7 +178,7 @@
 import defaultAvatar from '@/assets/avatar.png'
 import './AddDialog.scss'
 // import { addStar, addRate } from 'api/chonggou'
-import {getMsListByGroupId, getUserList} from 'api/chonggou'
+import {getStoreDetail,getMsListByGroupId,addStory,updateStory,deliveryStory, getUserList} from 'api/chonggou'
 
 export default {
   name: 'chonggou-index-detail',
@@ -187,13 +195,19 @@ export default {
       rightLoading: false,
       defaultAvatar: defaultAvatar,
 
+      startBtnLoading: false,
+      submitBtnLoading: false,
       editForm: {
         name: '',
         group: '',
         microserviceInfo: [],
         storyCode: 1,
         time: null,
-        owner: {},
+        owner: {
+          id: 0,
+          name: '',
+          avatar: ''
+        },
         party: [],
         storyDesp: '',
         reduceCode: '',
@@ -231,6 +245,7 @@ export default {
       searchValue: '',
       xuqiuInfo: null,
 
+      // 选择用户
       selectUserDialogVisible: false,
       selectUserType: 'owner',
       selectUserForm: {
@@ -241,13 +256,18 @@ export default {
     }
   },
   computed: {
+    isUpdate () {
+      return this.detailId !== 0
+    }
   },
   watch: {
     value (val) {
       if (val && val !== this.visible) {
         this.visible = val
         if (this.visible) {
-          this.getDetailDate()
+          if (this.isUpdate) {
+            this.getDetailDate()
+          }
         }
       }
     },
@@ -261,11 +281,47 @@ export default {
   },
   methods: {
     getDetailDate () {
-
+      this.leftLoading = true
+      getStoreDetail(this.detailId).then(res => {
+        this.leftLoading = false
+        this.editForm = {
+          name: res.name,
+          group: res.group,
+          microserviceInfo: res.microserviceInfo.split(','),
+          storyCode: res.storyCode,
+          time: [res.estStartTime, res.estEndTime],
+          owner: {
+            id: res.owner,
+            name: res.ownerZn,
+            avatar: res.avatar
+          },
+          party: res.partList.map(x => ({id: x.id, avatar: x.avatar, name: x.nameZn})),
+          storyDesp: res.storyDesp,
+          reduceCode: res.reduceCode,
+          coreAlmNo: res.coreAlmNo,
+        }
+        if (res.coreAlmNo) {
+          this.searchValue = res.coreAlmNo
+          this.handleSearch()
+        }
+      }).catch(err => {
+        this.leftLoading = false
+        console.log('err', err)
+      })
     },
 
+    // 立即开始
     handleStart () {
-
+      this.startBtnLoading = true
+      deliveryStory(this.detailId).then(res => {
+        this.startBtnLoading = false
+        this.closeDialog()
+        this.$message.success('执行成功')
+        // 刷新父级数据
+        this.$parent.getData()
+      }).catch(err => {
+        this.startBtnLoading = false
+      })
     },
     submitEditForm () {
       this.$refs.editForm.validate((valid) => {
@@ -279,26 +335,63 @@ export default {
             reduceCode: this.editForm.reduceCode,
             estStartTime: this.editForm.time[0],
             estEndTime: this.editForm.time[1],
-            owner: {},
-            party: [],
+            owner: this.editForm.owner.id,
+            party: this.editForm.party.map(x => x.id).join(','),
             coreAlmNo: this.searchValue,
           }
-          console.log('data', data)
-          // addRate(this.editForm).then(res => {
-          //   this.$message.success('添加成功')
-          //   this.closeAddRateDialog()
-          // }).catch(e => {
-          //   console.log('err', e)
-          // })
-
-          this.$message.success('添加成功')
-          this.closeAddRateDialog()
+          this.submitBtnLoading = true
+          if (!this.isUpdate) {
+            addStory(data).then(res => {
+              this.submitBtnLoading = false
+              this.closeDialog()
+              this.$message.success('添加成功')
+              // 刷新父级数据
+              this.$parent.getData()
+            }).catch(err => {
+              this.submitBtnLoading = false
+              console.log('err', err)
+            })
+          } else {
+            updateStory(this.detailId, data).then(res => {
+              this.submitBtnLoading = false
+              this.closeDialog()
+              this.$message.success('修改成功')
+              // 刷新父级数据
+              this.$parent.getData()
+            }).catch(err => {
+              this.submitBtnLoading = false
+              console.log('err', err)
+            })
+          }
         } else {
           console.log('error submit!!')
           this.$message.warning('表单校验失败！')
           return false
         }
       })
+    },
+
+    closeDialog () {
+      this.visible = false
+    },
+    handleCloseDialog () {
+      this.editForm = {
+        name: '',
+        group: '',
+        microserviceInfo: [],
+        storyCode: 1,
+        time: null,
+        owner: {
+          id: 0,
+          name: '',
+          avatar: ''
+        },
+        party: [],
+        storyDesp: '',
+        reduceCode: '',
+        coreAlmNo: '',
+      }
+      this.$refs.editForm.resetFields()
     },
 
     // 查询需求
@@ -356,6 +449,10 @@ export default {
       })
     },
 
+    deleteParty (index) {
+      this.editForm.party.splice(index, 1)
+    },
+
     // 选择用户相关
     // 搜索用户
     openSelectDialog (type) {
@@ -364,7 +461,7 @@ export default {
     },
     selectUserHandler () {
       if (this.selectUserForm.name === '') {
-        this.$message.warning('请输入搜索的用户')
+        // this.$message.warning('请输入搜索的用户')
         return
       }
       getUserList(this.selectUserForm.name).then(res => {

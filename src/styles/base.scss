@@ -32,6 +32,9 @@ html, body{
 .margin-right{
   margin-right: 8px;
 }
+.margin-right-l{
+  margin-right: 16px;
+}
 .margin-bottom {
   margin-bottom: 5px;
 }
@@ -47,4 +50,9 @@ html, body{
 }
 .padding{
   padding: 8px;
+}
+
+.flex-center{
+  display: flex;
+  align-items: center;
 }

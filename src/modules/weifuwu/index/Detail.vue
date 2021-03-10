@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="weifuwu-index-detail" :visible.sync="visible">
+    <el-dialog class="weifuwu-index-detail" :visible.sync="visible" @close="closeHandle">
       <template class="detail-header" slot="title">
         <div class="detail-header-left">{{leftInfo.name}}</div>
         <div class="detail-header-right">
@@ -537,7 +537,11 @@ export default {
         console.log('err', err)
       })
     },
+    closeHandle () {
+      this.$parent.handleGetListData()
+    }
   },
+
 }
 </script>
 

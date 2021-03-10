@@ -187,9 +187,7 @@
 
 <script>
 import defaultAvatar from '@/assets/avatar.png'
-import BScroll from 'better-scroll'
 import './DetailDialog.scss'
-// import { addStar, addRate } from 'api/chonggou'
 
 export default {
   name: 'chonggou-index-detail',
@@ -220,29 +218,6 @@ export default {
         inputLink: '',
         content: '',
       },
-
-      // add rate
-      addRateVisible: false,
-      addRateForm: {
-        a: '',
-        b: '',
-        rate: 5,
-        content: '',
-      },
-      addRateRules: {
-        a: [
-          { required: true, message: '请选择a', trigger: 'change' },
-        ],
-        b: [
-          { required: true, message: '请选择b', trigger: 'change' },
-        ],
-        rate: [
-          { required: true, message: '请填写评分', trigger: 'blur' },
-        ],
-        content: [
-          { required: true, message: '请填写评语', trigger: 'blur' },
-        ],
-      },
     }
   },
   computed: {
@@ -264,10 +239,6 @@ export default {
   },
   mounted () {
     this.getInfo()
-    this.bs = null
-    this.$nextTick(() => {
-      this.scrollInit()
-    })
   },
   methods: {
     getInfo () {
@@ -319,30 +290,6 @@ export default {
         xiaojian: 2,
         services: ['关联微服务1', '关联微服务2', '关联微服务3', '关联微服务3', '关联微服务3', '关联微服务3'],
       }
-    },
-
-    // log
-    scrollToBottom () {
-      setTimeout(() => {
-        this.bs.scrollToElement('#log-content-bottom', 200)
-      }, 0)
-    },
-    scrollInit () {
-      this.bs = new BScroll(this.$refs.bsWrapper, {
-        mouseWheel: true, // 允许鼠标滚动
-        preventDefault: false,
-        scrollbar: { // 显示滚动条
-          fade: false,
-          interactive: false,
-        },
-      })
-      // this.bs.on('scrollEnd', (pos) => {
-      //   console.log('xiala')
-      //   // 下拉动作
-      //   if (pos.y > 50) {
-      //     // this.loadData()
-      //   }
-      // })
     },
     changeLogType (val) {
       if (this.logType !== val) {

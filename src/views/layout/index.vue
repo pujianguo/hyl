@@ -1,13 +1,21 @@
 <template>
   <div class="layout">
     <div class="layout-header">
-      <div class="logo"></div>
+      <div class="logo">
+        <img class="logo-img" src="https://himg.bdimg.com/sys/portrait/item/pp.1.933d4bef.jFJ1aiJYtjFTu0mglKZIEw.jpg?tt=1615118344789"/>
+        <span>重构工具链</span>
+      </div>
       <div class="menu">
         <div v-for="(item, index) in menuList" class="menu-item" :key="index" @click="changeMenu(item, index)"
           :class="{active: item.pageName === activePage}">{{item.title}}</div>
       </div>
-      <div class="btns"></div>
+      <div class="btns">
+        <a class="btn" href="http://baidu.com">配置</a>
+        <img class="avatar" :src="user.avatar" alt="">
+        <span>{{user.name}}</span>
+      </div>
     </div>
+
     <div class="layout-content">
       <router-view></router-view>
     </div>
@@ -21,11 +29,15 @@ export default {
   data () {
     return {
       menuList: [
-        { title: '首页', pageName: 'Home' },
-        { title: '首页2', pageName: 'Weifuwu' },
-        { title: '首页3', pageName: 'Chonggou' },
-        { title: '首页4', pageName: 'Home4' },
+        { title: '首页', pageName: 'home' },
+        { title: '微服务', pageName: 'Weifuwu' },
+        { title: '重构需求', pageName: 'Chonggou' },
+        { title: '氛围建设', pageName: 'fengwei' },
       ],
+      user: {
+        name: '姓名',
+        avatar: 'https://himg.bdimg.com/sys/portrait/item/pp.1.933d4bef.jFJ1aiJYtjFTu0mglKZIEw.jpg?tt=1615118344789'
+      }
     }
   },
   computed: {
@@ -60,11 +72,22 @@ export default {
   &-header{
     height: 50px;
     widows: 100%;
-    background: #777;
+    background: #252b39;
     display: flex;
     align-items: center;
     .logo{
       width: 200px;
+      display: flex;
+      align-items: center;
+      &-img{
+        width: 36px;
+        height: 36px;
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+      span{
+        color: #fff;
+      }
     }
     .menu{
       width: 0;
@@ -75,14 +98,34 @@ export default {
         height: 50px;
         line-height: 50px;
         padding: 0 20px;
+        font-size: 14px;
+        color: #fff;
         &.active{
-          color: #eee
+          color: #5b78d6;
         }
       }
     }
     .btns{
       text-align: right;
       width: 300px;
+      padding-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      .btn{
+        padding: 10px;
+        color: #fff;
+        margin-right: 10px;
+      }
+      .avatar{
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+      span{
+        color: #fff;
+      }
     }
   }
   &-content{

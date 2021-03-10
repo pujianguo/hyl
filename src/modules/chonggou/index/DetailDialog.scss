@@ -64,6 +64,7 @@ $border-color: #ccc;
               display: flex;
               align-items: center;
               overflow-x: auto;
+              overflow-y: hidden;
               .value-a{
                 width: 60px;
               }
@@ -97,7 +98,7 @@ $border-color: #ccc;
           height: 0;
           padding: 0 10px;
           overflow-x: hidden;
-          overflow-y: hidden;
+          overflow-y: auto;
           box-sizing: border-box;
           position: relative;
           .item{
@@ -212,4 +213,7 @@ $border-color: #ccc;
       }
     }
   }
+}
+.loadmore-wrapper{
+  text-align: center;
 }

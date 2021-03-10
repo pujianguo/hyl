@@ -537,6 +537,7 @@ export default {
         console.log('err', err)
       })
     },
+
     closeHandle () {
       this.$parent.handleGetListData()
     }

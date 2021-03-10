@@ -21,5 +21,12 @@ export const updateStory = (id, data) => _put(`story/${id}`, data)
 // 立即开始
 export const deliveryStory = id => _put(`story/delivery/${id}`)
 
+export const getStoreDomain = id => _get(`story/domain/${id}`)
+export const finishStory = id => _put(`finish/story/${id}`)
+export const updateStoryMark = (id, data) => _put(`mark/story/${id}`, data)
+
 export const getMsListByGroupId = groupId => _get(`ms-list/${groupId}`)
 export const getUserList = value => _get(`user/${value}`)
+
+export const getStoryProgress= (id, params) => _get(`story-progress/${id}`, params)
+export const addStoryProgress = params => _post('story-progress', params)
